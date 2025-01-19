@@ -1,0 +1,116 @@
+{
+  "colors": {
+    //Primary Colors
+    "Primary": "#1988FE",
+    "LightBlue": "#60cdf5",
+    "LightBlack": "#6d7380",
+    "Jade": "#07eb45",
+    "Parriot": "#0deb49",
+    "DimJade": "#acdcd6", //
+    "WizardWhite": "#E3F2FD", //
+    "Tiffany": "#74B3CE", //
+    "AquaSmoke": "#8AA29E", //
+    "Storm": "#686963", //
+    "MidnightMosaic": "#3D5467", //
+    "AngryPasta": "#FCD179", //
+    "MelonRed": "#F38D68", //
+    //Secondary Colors
+    "SugarRush": "#7371FC", //
+    "Cobalite": "#A594F9", //
+    "Lavendar": "#CDC1FF", //
+    "PastelPurple": "#E5D9F2", //
+    "FlirtyRose": "#E56399", //
+    "Cranberry": "#DB5461", //
+    "Coral": "#EE6C4D", //
+    "Lovelife": "#FFA6CB", //
+    "LinkColor": "#007AFF", //
+    //Neutral
+    "White": "#FFFFFF",
+    "UltraLightGrey": "#E5E5E5",
+    "MidGrey1": "#e2e8f0",
+    "MidGrey2": "#59606E",
+    "MidGrey3": "#cbd5e1",
+    "MidGrey4": "#e8e9f1",
+    "MidGrey5": "#7D7D7D", //
+    "DarkGrey": "#838383", //
+    "UltraDarkGrey": "#6b717d",
+    //Social
+    "Facebook": "#1877F2", //
+    "Google": "#FFFFFF", //
+    "Apple": "#000000", //
+    //Extra Colors
+    "white": "#FFFFFF",
+    "black": "#000000",
+    "secondary": "#3EFEE6",
+    "yellow": "#fff400",
+    "Green": "#03EC44",
+    "background": "#ecf0f1", //
+    "text": "#2c3e50", //
+    "link": "#2980b9", //
+    "border": "#bdc3c7", //
+    "error": "#EC495D", //
+    "success": "#6CC070", //
+    "iconColor": "#555555", //
+    "searchFieldColor": "#f5f5f5"
+  },
+  "linear": {
+    "darkBlue": "#1988FE",
+    "lightBlue": "#2BBDF2"
+  },
+  "typography": {
+    "heading": {
+      "fontFamily": "Roboto-Bold", //
+      "fontWeight": "bold" //
+    },
+    "body": {
+      "fontFamily": "Roboto-Regular", //
+      "fontWeight": "normal" //
+    },
+    "caption": {
+      "fontFamily": "Roboto-Light", //
+      "fontWeight": "normal" //
+    }
+  },
+  "borders": {
+    "miniRadius": 4,
+    "normalRadius": 8,
+    "regularRadius": 10,
+    "fullRadius": 12,
+    "width": 1,
+    "circle": 90
+  },
+  "shadows": {
+    "small": {
+      "shadowColor": "#000",
+      "shadowOffset": {
+        "width": 0,
+        "height": 2
+      },
+      "shadowOpacity": 0.2,
+      "shadowRadius": 2
+    },
+    "medium": {
+      "shadowColor": "#000",
+      "shadowOffset": {
+        "width": 0,
+        "height": 4
+      },
+      "shadowOpacity": 0.3,
+      "shadowRadius": 4
+    },
+    "large": {
+      "shadowColor": "#000",
+      "shadowOffset": {
+        "width": 0,
+        "height": 6
+      },
+      "shadowOpacity": 0.4,
+      "shadowRadius": 6
+    }
+  },
+  "elevation": {
+    "small": 2,
+    "medium": 4,
+    "large": 6
+  }
+}

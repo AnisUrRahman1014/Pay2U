@@ -2,6 +2,12 @@
   "expo": {
     "name": "Pay2U",
     "slug": "Pay2U",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "plugins": [[
+      "expo-font",
+      {
+        "fonts": ["./assets/fonts/Lato-Bold.tff", "./assets/fonts/Lato-Regular.tff", "./assets/fonts/Lato-Thin.tff", "./assets/fonts/Lato-Light.tff"]
+      }
+    ]]
   }
 }
