@@ -8,24 +8,29 @@ import NativeInput from "../../../components/NativeInput/NativeInput";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { useNavigation } from "@react-navigation/native";
+import { AppIcons } from "../../../libs";
+import { AppColors } from "../../../utils/Global";
 
-const Login = () => {
-  const navigation = useNavigation();
+const Signup = (props) => {
+  const { navigation } = props;
   const validationSchema = Yup.object({
+    Username: Yup.string().required("Username required"),
     Email: Yup.string().email("Invalid Email").required("Email is required"),
     Password: Yup.string()
       .min(6, "Minimum 6 digits required")
       .required("Required Field"),
+    ConfirmPassword: Yup.string()
+      .oneOf([Yup.ref("Password"), null], "Passwords must match")
+      .required("Confirm Password is required"),
   });
-
-  const handleCredLogin = async (values) => {
-    console.log(values);
-  };
-
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.mainContainer}>
+        <AppIcons.BackIcon1
+          size={30}
+          color={AppColors.iconColor}
+          onPress={() => navigation.goBack()}
+        />
         <View style={styles.logoCtn}>
           <Image
             source={Images.Pay2ULogo}
@@ -36,19 +41,33 @@ const Login = () => {
         <Text style={styles.desc}>
           Welcome to Pay2U, your bill splitting companion
         </Text>
-        <CustomAuthHeader title={"Login"} />
+        <CustomAuthHeader title={"Sign up"} />
 
         <KeyboardAwareScrollView>
           <Formik
             initialValues={{
+              Username: "",
               Email: "",
+              ConfirmPassword: "",
               Password: "",
             }}
             validationSchema={validationSchema}
-            onSubmit={handleCredLogin}
           >
             {({ values, errors, touched, handleSubmit, handleChange }) => (
               <View style={styles.fieldsCtn}>
+                <NativeInput
+                  withOutIcon
+                  label={"Username"}
+                  value={values?.Username}
+                  onChangeText={handleChange("Username")}
+                  containerStyle={styles.inputStyles}
+                  errorText={errors.Username || touched.Username}
+                />
+                {(errors?.Username || touched?.Username) && (
+                  <Text style={styles.errorTxt}>
+                    {errors?.Username || touched?.Username}
+                  </Text>
+                )}
                 <NativeInput
                   withOutIcon
                   label={"Email"}
@@ -74,40 +93,28 @@ const Login = () => {
                     {errors?.Password || touched?.Password}
                   </Text>
                 )}
+                <NativeInput
+                  withEyeIcon
+                  label={"Confirm Password"}
+                  value={values?.ConfirmPassword}
+                  onChangeText={handleChange("ConfirmPassword")}
+                  containerStyle={styles.inputStyles}
+                />
+                {(errors?.ConfirmPassword || touched?.ConfirmPassword) && (
+                  <Text style={styles.errorTxt}>
+                    {errors?.ConfirmPassword || touched?.ConfirmPassword}
+                  </Text>
+                )}
                 <TouchableOpacity style={styles.btn} onPress={handleSubmit}>
-                  <Text style={styles.btnTxt}>Login</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.forgotBtnCtn}>
-                  <Text style={styles.forgotBtn}>Forgot Password?</Text>
+                  <Text style={styles.btnTxt}>Sign Up</Text>
                 </TouchableOpacity>
               </View>
             )}
           </Formik>
-
-          <View style={styles.separator}>
-            <View style={styles.bar} />
-            <Text>OR</Text>
-            <View style={styles.bar} />
-          </View>
-
-          <TouchableOpacity style={styles.googleBtn}>
-            <View style={styles.googleIconCtn}>
-              <Image
-                source={Images.GoogleIcon}
-                resizeMode="contain"
-                style={styles.googleIcon}
-              />
-            </View>
-            <Text style={styles.googleBtnTxt}>Sign in with Google</Text>
-          </TouchableOpacity>
         </KeyboardAwareScrollView>
-        <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-          <Text style={styles.signUpTxt}>Don't have an account? Sign up</Text>
-        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 };
 
-export default Login;
+export default Signup;

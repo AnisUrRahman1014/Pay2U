@@ -1,9 +1,9 @@
-import { StyleSheet } from "react-native";
 import {
   moderateScale,
   moderateVerticalScale,
 } from "react-native-size-matters";
 import { AppColors } from "../../../utils/Global";
+import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     backgroundColor: AppColors.White,
   },
   logoCtn: {
-    height: moderateVerticalScale(200),
+    height: moderateVerticalScale(150),
     alignItems: "center",
     justifyContent: "center",
   },
@@ -51,57 +51,6 @@ const styles = StyleSheet.create({
   btnTxt: {
     color: AppColors.White,
     fontFamily: "Lato-Regular",
-  },
-  forgotBtnCtn: {
-    marginVertical: moderateScale(20, 0.3),
-  },
-  forgotBtn: {
-    fontFamily: "Lato-Regular",
-    color: AppColors.Primary,
-  },
-  separator: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
-  bar: {
-    backgroundColor: AppColors.Black,
-    height: moderateScale(1, 0.3),
-    width: "40%",
-  },
-  googleBtn: {
-    flexDirection: "row",
-    alignSelf: "center",
-    backgroundColor: AppColors.White,
-    borderColor: AppColors.Black,
-    borderWidth: 1,
-    width: "57%",
-    height: moderateScale(50, 0.3),
-    padding: moderateScale(5, 0.3),
-    borderRadius: moderateScale(50),
-    marginVertical: moderateVerticalScale(10, 0.3),
-    justifyContent: "space-evenly",
-    alignItems: "center",
-  },
-  googleIconCtn: {
-    alignSelf: "flex-start",
-    width: "30%",
-  },
-  googleIcon: {
-    width: "100%",
-    height: "100%",
-  },
-  googleBtnTxt: {
-    fontFamily: "Lato-Regular",
-    fontSize: moderateScale(14, 0.1),
-    fontWeight: "600",
-  },
-  signUpTxt: {
-    fontFamily: "Lato-Bold",
-    fontSize: moderateScale(14, 0.3),
-    alignSelf: "center",
-    marginBottom: moderateScale(20, 0.3),
-    fontWeight: "650",
   },
   errorTxt: {
     color: "red",
