@@ -3,11 +3,30 @@
     "name": "Pay2U",
     "slug": "Pay2U",
     "version": "1.0.0",
-    "plugins": [[
+    "android": {
+      "googleServicesFile": "./google-services.json",
+      "package": "com.anis.pay2u"
+    },
+    "ios": {
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "bundleIdentifier": "com.anis.pay2u"
+    },
+    "plugins": [
+      [
       "expo-font",
       {
-        "fonts": ["./assets/fonts/Lato-Bold.tff", "./assets/fonts/Lato-Regular.tff", "./assets/fonts/Lato-Thin.tff", "./assets/fonts/Lato-Light.tff"]
+        "fonts": ["./assets/fonts/Lato-Bold.ttf", "./assets/fonts/Lato-Regular.ttf", "./assets/fonts/Lato-Thin.ttf", "./assets/fonts/Lato-Light.ttf"]
       }
-    ]]
+      ],
+      "@react-native-firebase/app",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
+      ],
+      ]
   }
 }

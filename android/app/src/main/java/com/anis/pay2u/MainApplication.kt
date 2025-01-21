@@ -1,4 +1,4 @@
-package com.pay2u
+package com.anis.pay2u
 
 import android.app.Application
 import android.content.res.Configuration

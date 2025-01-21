@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "958861649906",
+    "project_id": "pay2u-b7946",
+    "storage_bucket": "pay2u-b7946.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:958861649906:android:e17115bf9771d48814ed6b",
+        "android_client_info": {
+          "package_name": "com.anis.pay2u"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "958861649906-hvbjlgaqpv6pcjssj62aj5i2b5f3f071.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQKVM20zqNnX4_wS-K9VJXXDslPazd4Lw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "958861649906-hvbjlgaqpv6pcjssj62aj5i2b5f3f071.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

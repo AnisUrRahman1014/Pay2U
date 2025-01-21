@@ -1,5 +1,4 @@
-import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
+import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import AppNavigation from "./src/navigation";
 import { useFonts } from "expo-font";

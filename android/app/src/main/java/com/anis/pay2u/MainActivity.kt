@@ -1,4 +1,4 @@
-package com.pay2u
+package com.anis.pay2u
 
 import android.os.Build
 import android.os.Bundle
@@ -16,10 +16,6 @@ class MainActivity : ReactActivity() {
     // coloring the background, status bar, and navigation bar.
     // This is required for expo-splash-screen.
     setTheme(R.style.AppTheme);
-    super.onCreate(null)
-  }
-
-  override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(null)
   }
 
