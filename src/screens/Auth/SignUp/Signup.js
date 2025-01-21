@@ -10,6 +10,9 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { AppIcons } from "../../../libs";
 import { AppColors } from "../../../utils/Global";
+import auth, { updateProfile } from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
+import { showSuccess } from "../../../utils/MessageHandlers";
 
 const Signup = (props) => {
   const { navigation } = props;
@@ -23,6 +26,53 @@ const Signup = (props) => {
       .oneOf([Yup.ref("Password"), null], "Passwords must match")
       .required("Confirm Password is required"),
   });
+
+  const handleSignUp = async (values) => {
+    auth()
+      .createUserWithEmailAndPassword(
+        values.Email.toLowerCase(),
+        values.Password
+      )
+      .then(async (res) => {
+        firestore()
+          .collection("users")
+          .doc(res?.user?.uid)
+          .set({
+            userName: values.Username,
+            email: values.Email,
+            userId: res?.user?.uid,
+          })
+          .then(async () => {
+            // Update user profile
+            await updateProfile(res?.user, {
+              displayName: values.Username,
+            });
+            showSuccess("Sign Up Successful");
+            // setLoading(false);
+            setTimeout(() => {
+              navigation.navigate("Login");
+            }, 1000);
+          })
+          .catch((error) => {
+            throw new Error("failed to store in database" + error);
+          });
+      })
+      .catch((error) => {
+        console.log("createUserWithEmailAndPassword error:", error);
+        // setLoading(false);
+        if (error.code === "auth/email-already-in-use") {
+          console.log(error);
+          showError("That email address is already in use!");
+        }
+
+        if (error.code === "auth/invalid-email") {
+          console.log(error);
+          showError("That email address is invalid!");
+        }
+
+        console.error(error);
+      });
+  };
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.mainContainer}>
@@ -52,6 +102,7 @@ const Signup = (props) => {
               Password: "",
             }}
             validationSchema={validationSchema}
+            onSubmit={handleSignUp}
           >
             {({ values, errors, touched, handleSubmit, handleChange }) => (
               <View style={styles.fieldsCtn}>
@@ -61,9 +112,8 @@ const Signup = (props) => {
                   value={values?.Username}
                   onChangeText={handleChange("Username")}
                   containerStyle={styles.inputStyles}
-                  errorText={errors.Username || touched.Username}
                 />
-                {(errors?.Username || touched?.Username) && (
+                {errors?.Username && (
                   <Text style={styles.errorTxt}>
                     {errors?.Username || touched?.Username}
                   </Text>
@@ -74,9 +124,8 @@ const Signup = (props) => {
                   value={values?.Email}
                   onChangeText={handleChange("Email")}
                   containerStyle={styles.inputStyles}
-                  errorText={errors.Email || touched.Email}
                 />
-                {(errors?.Email || touched?.Email) && (
+                {errors?.Email && (
                   <Text style={styles.errorTxt}>
                     {errors?.Email || touched?.Email}
                   </Text>
@@ -88,7 +137,7 @@ const Signup = (props) => {
                   onChangeText={handleChange("Password")}
                   containerStyle={styles.inputStyles}
                 />
-                {(errors?.Password || touched?.Password) && (
+                {errors?.Password && (
                   <Text style={styles.errorTxt}>
                     {errors?.Password || touched?.Password}
                   </Text>
@@ -100,7 +149,7 @@ const Signup = (props) => {
                   onChangeText={handleChange("ConfirmPassword")}
                   containerStyle={styles.inputStyles}
                 />
-                {(errors?.ConfirmPassword || touched?.ConfirmPassword) && (
+                {errors?.ConfirmPassword && (
                   <Text style={styles.errorTxt}>
                     {errors?.ConfirmPassword || touched?.ConfirmPassword}
                   </Text>

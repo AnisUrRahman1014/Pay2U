@@ -1,7 +1,10 @@
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
 import AppNavigation from "./src/navigation";
 import { useFonts } from "expo-font";
+import { Provider } from "react-redux";
+import { persistor, store } from "./src/redux/store";
+import { PersistGate } from "reduxjs-toolkit-persist/integration/react";
+import { AlertNotificationRoot } from "react-native-alert-notification";
 
 export default function App() {
   const [loaded, error] = useFonts({
@@ -14,14 +17,14 @@ export default function App() {
   if (!loaded && !error) {
     return null;
   }
-  return <AppNavigation />;
-}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
+  return (
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <AlertNotificationRoot>
+          <AppNavigation />
+        </AlertNotificationRoot>
+      </PersistGate>
+    </Provider>
+  );
+}

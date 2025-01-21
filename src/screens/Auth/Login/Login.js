@@ -9,9 +9,14 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
+import { setUser } from "../../../redux/slices/persistSlice";
+import auth from "@react-native-firebase/auth";
+import { showError } from "../../../utils/MessageHandlers";
 
 const Login = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const validationSchema = Yup.object({
     Email: Yup.string().email("Invalid Email").required("Email is required"),
     Password: Yup.string()
@@ -19,8 +24,34 @@ const Login = () => {
       .required("Required Field"),
   });
 
-  const handleCredLogin = async (values) => {
-    console.log(values);
+  const handleCredLogin = (values) => {
+    try {
+      auth()
+        .signInWithEmailAndPassword(values.Email, values.Password)
+        .then((res) => {
+          // console.log('Response', res);
+          if (res?.user?.uid) {
+            const str = JSON.stringify(res);
+            const prs = JSON.parse(str);
+            const user = {
+              uid: prs.user.uid,
+              email: prs.user.email,
+              displayName: prs.user.displayName,
+              photoURL: prs.user.photoURL,
+            };
+            // Changing the Redux state for the user automatically switches the stack from AuthStack to MainStack
+            dispatch(setUser(prs?.user));
+          }
+        })
+        .catch((error) => {
+          console.log("Login Error:", error);
+          if (error.code === "auth/invalid-credential") {
+            showError("Incorrect Credentials. Please check your credentials");
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -55,7 +86,6 @@ const Login = () => {
                   value={values?.Email}
                   onChangeText={handleChange("Email")}
                   containerStyle={styles.inputStyles}
-                  errorText={errors.Email || touched.Email}
                 />
                 {(errors?.Email || touched?.Email) && (
                   <Text style={styles.errorTxt}>
