@@ -12,6 +12,7 @@
       "bundleIdentifier": "com.anis.pay2u"
     },
     "plugins": [
+      "@react-native-google-signin/google-signin",
       [
       "expo-font",
       {

@@ -1804,6 +1804,11 @@
   resolved "https://registry.npmjs.org/@react-native-firebase/firestore/-/firestore-21.7.1.tgz#69292bfdfdfa8ec48a04718fe57227571146e875"
   integrity sha512-tW1nfya6q/OK0KvQv3/6dJlyeagPoWWGKIvAhPDxjun33ZvCPPsKDJdRkSluaE6cszsCa2IP7srg56FespaWJA==
 
+"@react-native-google-signin/google-signin@^13.1.0":
+  version "13.1.0"
+  resolved "https://registry.npmjs.org/@react-native-google-signin/google-signin/-/google-signin-13.1.0.tgz#6482b89acf2ac88a6c68bc1304a265d5b7c3bb3a"
+  integrity sha512-C2/sqb0/s0c+Dwc/mykASZsRuHxGqn7SFrCxCY9D8p8IOQO05haInhCc7lzraJshRixGva5c/4usQZ71HMYSEQ==
+
 "@react-native/assets-registry@0.76.6":
   version "0.76.6"
   resolved "https://registry.npmjs.org/@react-native/assets-registry/-/assets-registry-0.76.6.tgz#649af8a19cbabcea321dbcfb1a1ae04bb298d958"
@@ -1952,6 +1957,14 @@
   dependencies:
     invariant "^2.2.4"
     nullthrows "^1.1.1"
+
+"@react-navigation/bottom-tabs@^7.2.0":
+  version "7.2.0"
+  resolved "https://registry.npmjs.org/@react-navigation/bottom-tabs/-/bottom-tabs-7.2.0.tgz#5b336b823226647a263b4fe743655462796b6aaf"
+  integrity sha512-1LxjgnbPyFINyf9Qr5d1YE0pYhuJayg5TCIIFQmbcX4PRhX7FKUXV7cX8OzrKXEdZi/UE/VNXugtozPAR9zgvA==
+  dependencies:
+    "@react-navigation/elements" "^2.2.5"
+    color "^4.2.3"
 
 "@react-navigation/core@^7.3.1":
   version "7.3.1"
@@ -5135,6 +5148,8 @@ path-type@^4.0.0:
     "@react-native-firebase/app" "^21.7.1"
     "@react-native-firebase/auth" "^21.7.1"
     "@react-native-firebase/database" "^21.7.1"
+    "@react-native-firebase/firestore" "^21.7.1"
+    "@react-native-google-signin/google-signin" "^13.1.0"
     "@react-navigation/native" "^7.0.14"
     "@react-navigation/native-stack" "^7.2.0"
     "@reduxjs/toolkit" "^2.5.0"
@@ -5145,7 +5160,7 @@ path-type@^4.0.0:
     expo-modules-autolinking "^2.0.7"
     expo-status-bar "~2.0.1"
     formik "^2.4.6"
-    pay2u "file:C:/Users/M AYAN LAPTOP/AppData/Local/Yarn/Cache/v6/npm-pay2u-1.0.0-c2207bf3-639a-4753-8737-35feac546101-1737485897829/node_modules/pay2u"
+    pay2u "file:C:/Users/M AYAN LAPTOP/AppData/Local/Yarn/Cache/v6/npm-pay2u-1.0.0-c266e2ad-49fa-4dc0-882f-d1a6ee4cff3f-1737652609176/node_modules/pay2u"
     react "18.3.1"
     react-native "0.76.6"
     react-native-alert-notification "^0.4.2"
