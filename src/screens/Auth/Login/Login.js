@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity, Platform } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Images from "../../../../assets/images";
@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import { setUser } from "../../../redux/slices/persistSlice";
 import auth from "@react-native-firebase/auth";
 import { showError } from "../../../utils/MessageHandlers";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -24,12 +25,59 @@ const Login = () => {
       .required("Required Field"),
   });
 
+  GoogleSignin.configure({
+    webClientId:
+      Platform.OS == "ios"
+        ? "958861649906-c4pr276n7f2qh9vdkl3i8ac4vvclalvd.apps.googleusercontent.com"
+        : "958861649906-qgavlp6lapib18e893cdhbqnqqdnrvsl.apps.googleusercontent.com",
+  });
+
+  async function onGoogleButtonPress() {
+    try {
+      const isSignedIn = GoogleSignin.getCurrentUser();
+      if (isSignedIn !== null) await GoogleSignin.signOut();
+      await GoogleSignin.hasPlayServices({
+        showPlayServicesUpdateDialog: true,
+      });
+
+      const userInfo = await GoogleSignin.signIn();
+
+      const { user, idToken } = userInfo?.data;
+      console.log("User Info", JSON.stringify(userInfo, null, 1));
+
+      // Create a Firebase credential using the ID token
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+
+      // Sign in to Firebase with the credential
+      const firebaseUserCredential = await auth().signInWithCredential(
+        googleCredential
+      );
+
+      if (firebaseUserCredential?.user) {
+        // console.log(
+        //   'Firebase User:',
+        //   JSON.stringify(firebaseUserCredential.user, null, 2),
+        // );
+
+        const temp = {
+          uid: firebaseUserCredential?.user?.uid,
+          email: firebaseUserCredential?.user?.email,
+          displayName: firebaseUserCredential.user.displayName,
+          photoURL: firebaseUserCredential?.user?.photoURL,
+        };
+        // Dispatch the user data to Redux (if required)
+        dispatch(setUser(firebaseUserCredential.user));
+      }
+    } catch (error) {
+      console.error("Error", "Failed to sign in with Google", error);
+    }
+  }
+
   const handleCredLogin = (values) => {
     try {
       auth()
         .signInWithEmailAndPassword(values.Email, values.Password)
         .then((res) => {
-          // console.log('Response', res);
           if (res?.user?.uid) {
             const str = JSON.stringify(res);
             const prs = JSON.parse(str);
@@ -121,7 +169,10 @@ const Login = () => {
             <View style={styles.bar} />
           </View>
 
-          <TouchableOpacity style={styles.googleBtn}>
+          <TouchableOpacity
+            style={styles.googleBtn}
+            onPress={onGoogleButtonPress}
+          >
             <View style={styles.googleIconCtn}>
               <Image
                 source={Images.GoogleIcon}

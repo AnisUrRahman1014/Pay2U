@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "958861649906-qgavlp6lapib18e893cdhbqnqqdnrvsl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.anis.pay2u",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
           "client_id": "958861649906-hvbjlgaqpv6pcjssj62aj5i2b5f3f071.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,13 @@
             {
               "client_id": "958861649906-hvbjlgaqpv6pcjssj62aj5i2b5f3f071.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "958861649906-c4pr276n7f2qh9vdkl3i8ac4vvclalvd.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.anis.pay2u"
+              }
             }
           ]
         }
