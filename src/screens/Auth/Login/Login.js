@@ -29,7 +29,7 @@ const Login = () => {
     webClientId:
       Platform.OS == "ios"
         ? "958861649906-c4pr276n7f2qh9vdkl3i8ac4vvclalvd.apps.googleusercontent.com"
-        : "958861649906-qgavlp6lapib18e893cdhbqnqqdnrvsl.apps.googleusercontent.com",
+        : "958861649906-hvbjlgaqpv6pcjssj62aj5i2b5f3f071.apps.googleusercontent.com",
   });
 
   async function onGoogleButtonPress() {
