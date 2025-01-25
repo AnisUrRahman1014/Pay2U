@@ -54,11 +54,6 @@ const Login = () => {
       );
 
       if (firebaseUserCredential?.user) {
-        // console.log(
-        //   'Firebase User:',
-        //   JSON.stringify(firebaseUserCredential.user, null, 2),
-        // );
-
         const temp = {
           uid: firebaseUserCredential?.user?.uid,
           email: firebaseUserCredential?.user?.email,
