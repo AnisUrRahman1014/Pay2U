@@ -34,6 +34,27 @@ const styles = StyleSheet.create({
     height: "100%",
     backgroundColor: "blue",
   },
+  container: {
+    backgroundColor: AppColors.iconColor,
+    width: "100%",
+    height: "50%",
+    padding: moderateScale(10),
+    borderRadius: moderateScale(10),
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: moderateVerticalScale(10),
+  },
+  addBtn: {
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    backgroundColor: AppColors.Primary,
+    width: moderateScale(70),
+    aspectRatio: 1,
+    borderRadius: moderateScale(250),
+    zIndex: 10,
+    elevation: 10,
+  },
 });
 
 export default styles;

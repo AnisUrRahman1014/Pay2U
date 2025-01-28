@@ -4,6 +4,7 @@ import Friends from "../screens/HomeStack/Friends/Friends";
 import Groups from "../screens/HomeStack/Groups/Groups";
 import Activities from "../screens/HomeStack/Activities/Activities";
 import Account from "../screens/HomeStack/Account/Account";
+import AddReceipt from "../screens/ReceiptStack/AddReceipt/AddReceipt";
 
 const Stack = createNativeStackNavigator();
 export const HomeStack = () => {
@@ -14,6 +15,7 @@ export const HomeStack = () => {
       }}
     >
       <Stack.Screen name="Home" component={Home} />
+      <Stack.Screen name="ReceiptStack" component={ReceiptStack} />
     </Stack.Navigator>
   );
 };
@@ -62,6 +64,18 @@ export const AccountStack = () => {
       }}
     >
       <Stack.Screen name="Account" component={Account} />
+    </Stack.Navigator>
+  );
+};
+
+export const ReceiptStack = () => {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Stack.Screen name="AddReceipt" component={AddReceipt} />
     </Stack.Navigator>
   );
 };

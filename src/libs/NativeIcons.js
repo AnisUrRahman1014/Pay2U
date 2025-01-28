@@ -90,6 +90,8 @@ const AppIcons = {
   GroupsIconActive: createIcon(FontAwesome, "group"),
   ActiveIconActive: createIcon(Feather, "activity"),
   AccountActiveIcon: createIcon(FontAwesome5, "user-cog"),
+
+  AddIcon: createIcon(Ionicons, "add"),
 };
 
 export default AppIcons;

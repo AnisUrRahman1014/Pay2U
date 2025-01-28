@@ -24,6 +24,12 @@
             "useFrameworks": "static"
           }
         }
+      ],
+      [
+        "react-native-vision-camera",
+        {
+          "cameraPermissionText": "Pay2U needs access to your Camera."
+        }
       ]
     ],
     "android": {
