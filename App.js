@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import { persistor, store } from "./src/redux/store";
 import { PersistGate } from "reduxjs-toolkit-persist/integration/react";
 import { AlertNotificationRoot } from "react-native-alert-notification";
-const { hasPermission, requestPermission } = useCameraPermission();
+// const { hasPermission, requestPermission } = useCameraPermission();
 
 export default function App() {
   const [loaded, error] = useFonts({
@@ -18,15 +18,6 @@ export default function App() {
   if (!loaded && !error) {
     return null;
   }
-
-  useEffect(() => {
-    async function requestCamPermission() {
-      if (!hasPermission) {
-        const response = await requestPermission();
-        console.log(response);
-      }
-    }
-  }, []);
 
   return (
     <Provider store={store}>
