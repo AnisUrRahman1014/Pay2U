@@ -68,52 +68,84 @@ const AddReceipt = (props) => {
     }
   };
 
-  const processLinesIntoRows = (lines) => {
-    const rows = [];
+  // const processLinesIntoRows = (lines) => {
+  //   const rows = [];
 
-    // Temporary variables to store item details
-    let currentItem = null;
+  //   // Temporary variables to store item details
+  //   let currentItem = null;
 
-    lines.forEach((line) => {
-      // Check if the line starts with a number (assume it's an item identifier)
-      if (/^\d+/.test(line)) {
-        // If there's a current item being processed, add it to the rows array
-        if (currentItem) {
-          rows.push(currentItem);
-        }
+  //   lines.forEach((line) => {
+  //     // Check if the line starts with a number (assume it's an item identifier)
+  //     if (/^\d+/.test(line)) {
+  //       // If there's a current item being processed, add it to the rows array
+  //       if (currentItem) {
+  //         rows.push(currentItem);
+  //       }
 
-        // Extract the identifier and description
-        const match = line.match(/^(\d+)\s+(.*)/);
-        if (match) {
-          currentItem = {
-            id: match[1], // Identifier (e.g., 45, 48)
-            description: match[2], // Description (e.g., "Bachelors and Masters Deg")
-            price: "", // Initialize price as empty
-          };
-        }
+  //       // Extract the identifier and description
+  //       const match = line.match(/^(\d+)\s+(.*)/);
+  //       if (match) {
+  //         currentItem = {
+  //           id: match[1], // Identifier (e.g., 45, 48)
+  //           description: match[2], // Description (e.g., "Bachelors and Masters Deg")
+  //           price: "", // Initialize price as empty
+  //         };
+  //       }
+  //     }
+  //     // Check if the line starts with "Rs." (assume it's a price)
+  //     else if (/^Rs\./.test(line)) {
+  //       if (currentItem) {
+  //         // Extract the price
+  //         const priceMatch = line.match(/Rs\.(\d+\.?\d*)/);
+  //         if (priceMatch) {
+  //           currentItem.price = `Rs.${priceMatch[1]}`; // Set the price
+  //         }
+
+  //         // Add the current item to the rows array
+  //         rows.push(currentItem);
+  //         currentItem = null; // Reset the current item
+  //       }
+  //     }
+  //   });
+
+  //   // If there's a remaining item, add it to the rows array
+  //   if (currentItem) {
+  //     rows.push(currentItem);
+  //   }
+
+  //   return rows;
+  // };
+
+  const processLinesIntoItems = (lines) => {
+    const items = [];
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+
+      // Skip lines that are too short or don't contain meaningful data
+      if (line.trim().length < 3) continue;
+
+      // Use regex to find prices in the line
+      const priceMatch = line.match(/(Rs\.|₹|\$|€)?\s*(\d+\.?\d*)/);
+      if (priceMatch) {
+        const price = priceMatch[0]; // Full price match (e.g., "Rs.10.50")
+        const priceIndex = line.lastIndexOf(price); // Find the position of the price
+
+        // Extract the item name (everything before the price)
+        let itemName = line.substring(0, priceIndex).trim();
+
+        // If the item name is empty, skip this line
+        if (!itemName) continue;
+
+        // Add the item to the items array
+        items.push({
+          item: itemName,
+          price: price,
+        });
       }
-      // Check if the line starts with "Rs." (assume it's a price)
-      else if (/^Rs\./.test(line)) {
-        if (currentItem) {
-          // Extract the price
-          const priceMatch = line.match(/Rs\.(\d+\.?\d*)/);
-          if (priceMatch) {
-            currentItem.price = `Rs.${priceMatch[1]}`; // Set the price
-          }
-
-          // Add the current item to the rows array
-          rows.push(currentItem);
-          currentItem = null; // Reset the current item
-        }
-      }
-    });
-
-    // If there's a remaining item, add it to the rows array
-    if (currentItem) {
-      rows.push(currentItem);
     }
 
-    return rows;
+    return items;
   };
 
   if (!permission) {
