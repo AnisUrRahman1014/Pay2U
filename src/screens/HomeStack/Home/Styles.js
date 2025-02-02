@@ -26,19 +26,19 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignSelf: "center",
-    backgroundColor: "red",
+    alignItems: "center",
+    justifyContent: "center",
   },
   rightCtn: {
     flex: 0.6,
     width: "100%",
     height: "100%",
-    backgroundColor: "blue",
+    justifyContent: "space-evenly",
+    padding: moderateScale(10),
   },
   container: {
-    backgroundColor: AppColors.iconColor,
     width: "100%",
-    height: "50%",
-    padding: moderateScale(10),
+    padding: moderateScale(5),
     borderRadius: moderateScale(10),
     justifyContent: "center",
     alignItems: "center",
@@ -54,6 +54,27 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(250),
     zIndex: 10,
     elevation: 10,
+  },
+  pieChart: {
+    alignSelf: "center",
+  },
+  balance: {
+    fontFamily: "Lato-Regular",
+    color: AppColors.White,
+    textAlign: "center",
+    fontSize: moderateScale(32, 0.3),
+  },
+  credit: {
+    fontFamily: "Lato-Regular",
+    color: AppColors.error,
+    textAlign: "center",
+    fontSize: moderateScale(20, 0.3),
+  },
+  debit: {
+    fontFamily: "Lato-Regular",
+    color: AppColors.PrimaryDark,
+    textAlign: "center",
+    fontSize: moderateScale(26, 0.3),
   },
 });
 

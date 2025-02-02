@@ -30,7 +30,7 @@ const AddReceipt = (props) => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [3, 4],
       quality: 0,
     });
 
@@ -44,6 +44,7 @@ const AddReceipt = (props) => {
     let result = await ImagePicker.launchCameraAsync({
       allowsEditing: true,
       quality: 0,
+      aspect: [3, 4]
     });
 
     if (!result.canceled) {
@@ -58,7 +59,7 @@ const AddReceipt = (props) => {
       const lines = rawText.split("\n").filter((line) => line.trim() !== "");
       console.log(lines);
       // Process lines to create row objects
-      const rows = processLinesIntoRows(lines);
+      const rows = processLinesIntoItems(lines);
 
       // Log the rows for debugging
       console.log("Rows:", JSON.stringify(rows, null, 1));
