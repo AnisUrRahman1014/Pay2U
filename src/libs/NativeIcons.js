@@ -92,7 +92,8 @@ const AppIcons = {
   AccountActiveIcon: createIcon(FontAwesome5, "user-cog"),
 
   AddIcon: createIcon(Ionicons, "add"),
-  GroupDummyIcon: createIcon(MaterialCommunityIcons, 'account-group')
+  GroupDummyIcon: createIcon(MaterialCommunityIcons, 'account-group'),
+  CrossIcon: createIcon(Entypo, 'cross'),
 };
 
 export default AppIcons;

@@ -14,3 +14,7 @@ export const AppFonts = {
   LatoThin: "Lato-Thin",
   LatoLight: "Lato-Light",
 };
+
+export const FirebaseContants = {
+  users: 'users',
+}

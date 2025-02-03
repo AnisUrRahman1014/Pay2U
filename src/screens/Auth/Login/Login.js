@@ -11,9 +11,10 @@ import * as Yup from "yup";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../../redux/slices/persistSlice";
-import auth from "@react-native-firebase/auth";
+import auth, { updateProfile } from "@react-native-firebase/auth";
 import { showError } from "../../../utils/MessageHandlers";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import firestore from '@react-native-firebase/firestore';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -43,7 +44,7 @@ const Login = () => {
       const userInfo = await GoogleSignin.signIn();
 
       const { user, idToken } = userInfo?.data;
-      console.log("User Info", JSON.stringify(userInfo, null, 1));
+      // console.log("User Info", JSON.stringify(userInfo, null, 1));
 
       // Create a Firebase credential using the ID token
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
@@ -54,14 +55,19 @@ const Login = () => {
       );
 
       if (firebaseUserCredential?.user) {
-        const temp = {
-          uid: firebaseUserCredential?.user?.uid,
+        const userData = {
+          userId: firebaseUserCredential?.user?.uid,
           email: firebaseUserCredential?.user?.email,
-          displayName: firebaseUserCredential.user.displayName,
-          photoURL: firebaseUserCredential?.user?.photoURL,
+          userName: firebaseUserCredential.user.displayName,
         };
         // Dispatch the user data to Redux (if required)
         dispatch(setUser(firebaseUserCredential.user));
+        await firestore()
+          .collection('users') // Adjust the collection name if needed
+          .doc(userData.userId) // Use the UID as the document ID
+          .set(userData, {merge: true});
+
+
       }
     } catch (error) {
       console.error("Error", "Failed to sign in with Google", error);

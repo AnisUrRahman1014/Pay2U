@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
   mainContainer: {
     backgroundColor: AppColors.White,
     flex: 1,
-    padding: moderateScale(20),
+    paddingHorizontal: moderateScale(20),
   },
   summaryCtn: {
     flexDirection: "row",

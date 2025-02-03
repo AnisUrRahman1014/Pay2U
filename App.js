@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import { persistor, store } from "./src/redux/store";
 import { PersistGate } from "reduxjs-toolkit-persist/integration/react";
 import { AlertNotificationRoot } from "react-native-alert-notification";
-// const { hasPermission, requestPermission } = useCameraPermission();
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function App() {
   const [loaded, error] = useFonts({
@@ -23,7 +23,9 @@ export default function App() {
     <Provider store={store}>
       <PersistGate persistor={persistor}>
         <AlertNotificationRoot>
-          <AppNavigation />
+          <GestureHandlerRootView>
+            <AppNavigation />
+          </GestureHandlerRootView>
         </AlertNotificationRoot>
       </PersistGate>
     </Provider>
