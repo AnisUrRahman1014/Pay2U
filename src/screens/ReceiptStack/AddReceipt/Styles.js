@@ -41,6 +41,48 @@ const styles = StyleSheet.create({
     color: AppColors.iconColor,
     fontSize: moderateScale(14, 0.3),
   },
+  rowCtn: {
+    flexDirection: "row",
+    padding: moderateScale(10),
+    gap: moderateScale(5),
+    alignItems: "top",
+    justifyContent: "center",
+    height: moderateVerticalScale(80),
+  },
+  inputStyles: (width) => ({
+    width: moderateScale(width),
+    alignSelf: "center",
+  }),
+  errorTxt: {
+    color: "red",
+    width: "100%",
+    textAlign: "right",
+    paddingHorizontal: moderateScale(20),
+    right: -20,
+  },
+  itemListCtn: {
+    backgroundColor: AppColors.iconColor,
+    paddingHorizontal: moderateScale(10),
+    paddingVertical: moderateScale(5),
+    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: "space-between",
+    width: "90%",
+    alignSelf: "center",
+    borderRadius: moderateScale(5),
+    marginVertical: moderateVerticalScale(5)
+  },
+  desc1: {
+    color: AppColors.White,
+    fontFamily: "Lato-Regular",
+    fontSize: moderateScale(16, 0.3),
+    width: moderateScale(200),
+  },
+  desc2: {
+    color: AppColors.White,
+    fontFamily: "Lato-Bold",
+    fontSize: moderateScale(16, 0.3),
+  },
 });
 
 export default styles;

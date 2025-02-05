@@ -138,7 +138,7 @@ const Login = () => {
                   onChangeText={handleChange("Email")}
                   containerStyle={styles.inputStyles}
                 />
-                {(errors?.Email || touched?.Email) && (
+                {(errors?.Email && touched?.Email) && (
                   <Text style={styles.errorTxt}>
                     {errors?.Email || touched?.Email}
                   </Text>
@@ -150,7 +150,7 @@ const Login = () => {
                   onChangeText={handleChange("Password")}
                   containerStyle={styles.inputStyles}
                 />
-                {(errors?.Password || touched?.Password) && (
+                {(errors?.Password && touched?.Password) && (
                   <Text style={styles.errorTxt}>
                     {errors?.Password || touched?.Password}
                   </Text>
