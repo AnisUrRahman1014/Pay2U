@@ -8,6 +8,7 @@ import { AppColors } from "../../../utils/Global";
 import AddFriendForm from "../../../components/ActionSheets/AddFriends/AddFriendForm";
 import { useSelector } from "react-redux";
 import { showError } from "../../../utils/MessageHandlers";
+import { getCurrentUserFromDB, getFriendsDocForUser } from "../../../services/queries";
 
 const Friends = () => {
   const currentUser = useSelector(state => state?.persistSlice?.user);
@@ -16,19 +17,16 @@ const Friends = () => {
   const [friends, setFriends] = useState([
     {
       name: "Honeydew",
-      members: 6,
       updatedAt: new Date().toISOString(),
       dues: "Pending",
     },
     {
       name: "Kiwi",
-      members: 4,
       updatedAt: new Date().toISOString(),
       dues: "Cleared",
     },
     {
       name: "Lemon",
-      members: 10,
       updatedAt: new Date().toISOString(),
       dues: "Pending",
     },
@@ -36,14 +34,24 @@ const Friends = () => {
 
   // Get user's friends
   useEffect(()=>{
+    getUserFriends();
   },[])
 
   const getUserFriends = async()=> {
     try{
-      // Get current user document from db
-      // Extract friend Ids
-      // Get friend docs
-      // Display friends
+      // GET FRIENDS
+      const newFriends = await getFriendsDocForUser();
+      const updatedNewFriendsDoc = newFriends.map(friend => {
+        return{
+          ...friend,
+          updatedAt: new Date().toISOString(),
+        }
+      })
+      console.log(updatedNewFriendsDoc)
+      setFriends([
+        ...friends,
+       ...updatedNewFriendsDoc
+      ])
     }catch(error){
       showError('Something went wrong | Getting friends')
       console.log('ERRORS', error)

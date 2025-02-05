@@ -41,6 +41,8 @@ const Signup = (props) => {
             userName: values.Username,
             email: values.Email,
             userId: res?.user?.uid,
+            dues: 0,
+            createdAt: new Date().toISOString(),
           })
           .then(async () => {
             // Update user profile
