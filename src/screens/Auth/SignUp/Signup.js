@@ -43,6 +43,8 @@ const Signup = (props) => {
             userId: res?.user?.uid,
             dues: 0,
             createdAt: new Date().toISOString(),
+            friends: [],
+            chatRoomIds: []
           })
           .then(async () => {
             // Update user profile

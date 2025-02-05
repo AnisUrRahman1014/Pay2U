@@ -17,6 +17,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center'
   },
+  label:{
+    fontFamily: 'Lato-Regular',
+    fontSize: moderateScale(18, 0.3),
+    textAlign: 'center',
+    textAlignVertical: 'center'
+  }
 });
 
 export default styles;

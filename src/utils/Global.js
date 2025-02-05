@@ -17,4 +17,5 @@ export const AppFonts = {
 
 export const FirebaseContants = {
   users: 'users',
+  chats: 'chats'
 }

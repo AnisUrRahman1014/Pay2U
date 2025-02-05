@@ -8,11 +8,15 @@ import { AppColors } from "../../../utils/Global";
 import AddFriendForm from "../../../components/ActionSheets/AddFriends/AddFriendForm";
 import { useSelector } from "react-redux";
 import { showError } from "../../../utils/MessageHandlers";
-import { getCurrentUserFromDB, getFriendsDocForUser } from "../../../services/queries";
+import {
+  getChatRoomIdForFriend,
+  getCurrentUserFromDB,
+  getFriendsDocForUser,
+} from "../../../services/queries";
+import { useNavigation } from "@react-navigation/native";
 
 const Friends = () => {
-  const currentUser = useSelector(state => state?.persistSlice?.user);
-  const userId = currentUser?.uid;
+  const navigation = useNavigation();
   const addFriendFormRef = useRef(null);
   const [friends, setFriends] = useState([
     {
@@ -33,30 +37,32 @@ const Friends = () => {
   ]);
 
   // Get user's friends
-  useEffect(()=>{
+  useEffect(() => {
     getUserFriends();
-  },[])
+  }, [addFriendFormRef]);
 
-  const getUserFriends = async()=> {
-    try{
+  const getUserFriends = async () => {
+    try {
       // GET FRIENDS
       const newFriends = await getFriendsDocForUser();
-      const updatedNewFriendsDoc = newFriends.map(friend => {
-        return{
-          ...friend,
-          updatedAt: new Date().toISOString(),
-        }
-      })
-      console.log(updatedNewFriendsDoc)
-      setFriends([
-        ...friends,
-       ...updatedNewFriendsDoc
-      ])
-    }catch(error){
-      showError('Something went wrong | Getting friends')
-      console.log('ERRORS', error)
+      setFriends(newFriends);
+    } catch (error) {
+      showError("Something went wrong: ".concat(error.message));
+      console.log("ERRORS", error);
     }
-  }
+  };
+
+  const openChatRoom = async (friend) => {
+    try {
+      let roomId = await getChatRoomIdForFriend(friend.userId);
+      navigation.navigate("ChatRoom", {
+        roomId,
+        friend
+      });
+    } catch (error) {
+      showError("Error accessing chat room: ".concat(error.message));
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -69,15 +75,30 @@ const Friends = () => {
               size={25}
               color={AppColors.White}
               style={styles.icon}
-              onPress={()=> addFriendFormRef.current.show()}
+              onPress={() => addFriendFormRef.current.show()}
             />
           )}
         />
-        {friends.map((friend, index) => {
-          return <ContactViewCard key={index} data={friend} isFriendCard />;
-        })}
+        {friends?.length > 0 ? (
+          friends.map((friend, index) => {
+            return (
+              <ContactViewCard
+                key={index}
+                data={friend}
+                isFriendCard
+                onPress={() => openChatRoom(friend)}
+              />
+            );
+          })
+        ) : (
+          <View
+            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          >
+            <Text style={styles.label}>No users found</Text>
+          </View>
+        )}
       </ScrollView>
-      <AddFriendForm formRef={addFriendFormRef}/>
+      <AddFriendForm formRef={addFriendFormRef} />
     </SafeAreaView>
   );
 };

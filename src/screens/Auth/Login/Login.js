@@ -14,7 +14,7 @@ import { setUser } from "../../../redux/slices/persistSlice";
 import auth, { updateProfile } from "@react-native-firebase/auth";
 import { showError } from "../../../utils/MessageHandlers";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
-import firestore from '@react-native-firebase/firestore';
+import firestore from "@react-native-firebase/firestore";
 
 const Login = () => {
   const navigation = useNavigation();
@@ -59,15 +59,17 @@ const Login = () => {
           userId: firebaseUserCredential?.user?.uid,
           email: firebaseUserCredential?.user?.email,
           userName: firebaseUserCredential.user.displayName,
+          dues: 0,
+          createdAt: new Date().toISOString(),
+          friends: [],
+          chatRoomIds: [],
         };
         // Dispatch the user data to Redux (if required)
         dispatch(setUser(firebaseUserCredential.user));
         await firestore()
-          .collection('users') // Adjust the collection name if needed
+          .collection("users") // Adjust the collection name if needed
           .doc(userData.userId) // Use the UID as the document ID
-          .set(userData, {merge: true});
-
-
+          .set(userData, { merge: true });
       }
     } catch (error) {
       console.error("Error", "Failed to sign in with Google", error);

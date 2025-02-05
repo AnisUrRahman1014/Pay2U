@@ -5,6 +5,7 @@ import Groups from "../screens/HomeStack/Groups/Groups";
 import Activities from "../screens/HomeStack/Activities/Activities";
 import Account from "../screens/HomeStack/Account/Account";
 import AddReceipt from "../screens/ReceiptStack/AddReceipt/AddReceipt";
+import ChatRoom from "../screens/HomeStack/ChatRoom/ChatRoom";
 
 const Stack = createNativeStackNavigator();
 export const HomeStack = () => {
@@ -28,6 +29,7 @@ export const FriendsStack = () => {
       }}
     >
       <Stack.Screen name="Friends" component={Friends} />
+      {/* <Stack.Screen name='ChatRoom' component={ChatRoom}/> */}
     </Stack.Navigator>
   );
 };

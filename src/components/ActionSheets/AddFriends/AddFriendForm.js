@@ -12,7 +12,11 @@ import { moderateScale } from "react-native-size-matters";
 import { AppColors, FirebaseContants } from "../../../utils/Global";
 import firestore from "@react-native-firebase/firestore";
 import { useSelector } from "react-redux";
-import { showError, showInfo, showSuccess } from "../../../utils/MessageHandlers";
+import {
+  showError,
+  showInfo,
+  showSuccess,
+} from "../../../utils/MessageHandlers";
 
 const AddFriendForm = ({ formRef }) => {
   const currentUser = useSelector((state) => state?.persistSlice?.user);
@@ -24,7 +28,7 @@ const AddFriendForm = ({ formRef }) => {
 
   const handleAddFreind = async (values) => {
     if (values?.Email === currentUser?.email) {
-      showError('Cannot add yourself')
+      showError("Cannot add yourself");
       return;
     }
     try {
@@ -50,7 +54,10 @@ const AddFriendForm = ({ formRef }) => {
       const userDocRef = firestore()
         .collection(FirebaseContants.users)
         .doc(userId);
+      const chatDocRef = firestore().collection(FirebaseContants.chats).doc();
+
       const userDoc = await userDocRef.get();
+      const chatDoc = await chatDocRef.get();
 
       // Step 5: Ensure that current user has a 'friends' field
       if (!userDoc.exists) {
@@ -61,6 +68,7 @@ const AddFriendForm = ({ formRef }) => {
 
       const userData = userDoc.data();
       let currentUserFriends = userData?.friends || [];
+      let chatRoomIds = userData?.chatRoomIds || [];
 
       // Step 6: Check if the user is already a friend
       if (currentUserFriends.includes(foundUser.userId)) {
@@ -70,16 +78,31 @@ const AddFriendForm = ({ formRef }) => {
 
       // Step 7: Add friend to the current user's friends array
       currentUserFriends.push(foundUser.userId);
+      chatRoomIds.push(chatDoc.id);
 
       // Step 8: Update the current user's document with the new friends array
       await userDocRef.update({
         friends: currentUserFriends,
+        chatRoomIds
       });
+      const chatRoomMembers = [];
+      chatRoomMembers.push(userId);
+      chatRoomMembers.push(foundUser?.userId);
+
+      await chatDocRef.set({
+        id: chatDoc.id,
+        users: chatRoomMembers,
+        type: 'friends',
+        receipts: [],
+        totalDues: 0,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      })
 
       showSuccess("Friend added successfully");
+      formRef.current.hide()
     } catch (error) {
-      showError('Something went wrong | Add friend')
-      console.log("Error adding new friend", error);
+      showError("Something went wrong: ".concat(error.message));
     }
   };
 
