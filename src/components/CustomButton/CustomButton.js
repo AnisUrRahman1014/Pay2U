@@ -8,6 +8,7 @@ const CustomButton = ({
   labelStyles,
   onPress,
   focusBtn = false,
+  disabled
 }) => {
   if (focusBtn) {
     return (
@@ -23,6 +24,7 @@ const CustomButton = ({
       <TouchableOpacity
         style={[styles.button2, containerStyles]}
         onPress={onPress}
+        disabled={disabled}
       >
         <Text style={[styles.label2, labelStyles]}>{label}</Text>
       </TouchableOpacity>

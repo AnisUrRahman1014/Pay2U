@@ -9,6 +9,7 @@ import { FirebaseContants } from "../../../utils/Global";
 const ChatRoom = (props) => {
   const { roomId, friend } = props?.route?.params; // State to store chat room data
   const [receipts, setReceipts] = useState([]); // State for receipts (if needed)
+  console.log(JSON.stringify(friend, null, 1))
 
   useEffect(() => {
     // Set up a real-time listener for the chat room document

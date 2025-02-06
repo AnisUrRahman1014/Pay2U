@@ -6,6 +6,8 @@ import Activities from "../screens/HomeStack/Activities/Activities";
 import Account from "../screens/HomeStack/Account/Account";
 import AddReceipt from "../screens/ReceiptStack/AddReceipt/AddReceipt";
 import ChatRoom from "../screens/HomeStack/ChatRoom/ChatRoom";
+import ConfirmReceipt from "../screens/ReceiptStack/ConfirmReceipt/ConfirmReceipt";
+import ChooseMembers from "../screens/ReceiptStack/ChooseMembers/ChooseMembers";
 
 const Stack = createNativeStackNavigator();
 export const HomeStack = () => {
@@ -16,7 +18,6 @@ export const HomeStack = () => {
       }}
     >
       <Stack.Screen name="Home" component={Home} />
-      <Stack.Screen name="ReceiptStack" component={ReceiptStack} />
     </Stack.Navigator>
   );
 };
@@ -29,7 +30,6 @@ export const FriendsStack = () => {
       }}
     >
       <Stack.Screen name="Friends" component={Friends} />
-      {/* <Stack.Screen name='ChatRoom' component={ChatRoom}/> */}
     </Stack.Navigator>
   );
 };
@@ -78,6 +78,8 @@ export const ReceiptStack = () => {
       }}
     >
       <Stack.Screen name="AddReceipt" component={AddReceipt} />
+      <Stack.Screen name="ConfirmReceipt" component={ConfirmReceipt}/>
+      <Stack.Screen name="ChooseMembers" component={ChooseMembers}/>
     </Stack.Navigator>
   );
 };

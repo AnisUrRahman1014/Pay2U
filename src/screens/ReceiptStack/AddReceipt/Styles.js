@@ -83,6 +83,12 @@ const styles = StyleSheet.create({
     fontFamily: "Lato-Bold",
     fontSize: moderateScale(16, 0.3),
   },
+  row:{
+    flexDirection: "row",
+    gap: moderateScale(5),
+    alignItems: "top",
+    justifyContent: "center",
+  }
 });
 
 export default styles;

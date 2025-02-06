@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import BottomTabsNav from "./BottomTabsNav";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ChatRoom from "../screens/HomeStack/ChatRoom/ChatRoom";
+import { ReceiptStack } from "./StackNavigator";
 const Stack = createNativeStackNavigator();
 const AppNavigation = () => {
   const user = useSelector((state) => state?.persistSlice?.user);
@@ -16,8 +17,9 @@ const AppNavigation = () => {
         ) : (
           <Stack.Screen name="Auth" component={AuthStack} />
         )}
-        
+
         <Stack.Screen name="ChatRoom" component={ChatRoom} />
+        <Stack.Screen name="ReceiptStack" component={ReceiptStack} />
       </Stack.Navigator>
     </NavigationContainer>
   );

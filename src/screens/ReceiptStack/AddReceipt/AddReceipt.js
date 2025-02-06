@@ -21,6 +21,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import NativeInput from "../../../components/NativeInput/NativeInput";
 import * as Yup from "yup";
 import { moderateScale } from "react-native-size-matters";
+import { showError } from "../../../utils/MessageHandlers";
 
 const AddReceipt = (props) => {
   const { navigation } = props;
@@ -71,7 +72,6 @@ const AddReceipt = (props) => {
       const result = await TextRecognition.recognize(imageUri);
       const rawText = result.text;
       const lines = rawText.split("\n").filter((line) => line.trim() !== "");
-      console.log(lines);
       // Process lines to create row objects
       const rows = processLinesIntoItems(lines);
 
@@ -213,14 +213,19 @@ const AddReceipt = (props) => {
   };
 
   const confirmReciept = () => {
-    // NAVIGATE TO THE CONFIRM RECEIPT SCREEM
-    // CHOOSE THE ITEMS THAT YOU HAVE ORDERED.
-    // ON THE NEXT SCREEN AFTER THAT, CHOOSE THE GROUP OR FRIEND TO ADD TO THE RECEIPT 
+    if (items.length === 0) {
+      showError("Please add at least one Item");
+      return;
+    }
+    // NAVIGATE TO THE CONFIRM RECEIPT SCREEN
+    navigation.navigate("ConfirmReceipt", {
+      items,
+    });
   };
 
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <GeneralHeader />
+      <GeneralHeader header={"Add New Receipt"} />
       <Formik
         initialValues={{
           name: "",
@@ -272,20 +277,23 @@ const AddReceipt = (props) => {
           );
         }}
       </Formik>
+
       <FlatList
         data={items}
         renderItem={({ item, index }) => {
           return (
             <View key={index} style={styles.itemListCtn}>
-              <AppIcons.CrossIcon
-                size={moderateScale(20)}
-                color={AppColors.White}
-                onPress={() => deleteItem(index)}
-                style={{
-                  marginRight: moderateScale(5),
-                }}
-              />
-              <Text style={styles.desc1}>{item?.itemName}</Text>
+              <View style={styles.row}>
+                <AppIcons.CrossIcon
+                  size={moderateScale(20)}
+                  color={AppColors.White}
+                  onPress={() => deleteItem(index)}
+                  style={{
+                    marginRight: moderateScale(5),
+                  }}
+                />
+                <Text style={styles.desc1}>{item?.itemName}</Text>
+              </View>
               <Text style={styles.desc2}>$ {item?.price}</Text>
             </View>
           );
