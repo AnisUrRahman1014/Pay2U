@@ -3,28 +3,10 @@ import React from "react";
 import styles from "./Styles";
 import Images from "../../../assets/images";
 import { moderateScale } from "react-native-size-matters";
-import { AppColors } from "../../utils/Global";
+import { AppColors, formateDate } from "../../utils/Global";
 import { AppIcons } from "../../libs";
 
 const ContactViewCard = ({ data, isFriendCard, onPress }) => {
-  const formateDate = (dateString) => {
-    // Create a Date object from the input string
-    const date = new Date(dateString);
-
-    // Options for formatting the date
-    const options = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
-
-    // Format the date using Intl.DateTimeFormat
-    const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
-      date
-    );
-
-    return formattedDate;
-  };
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>

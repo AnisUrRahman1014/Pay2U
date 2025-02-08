@@ -40,36 +40,54 @@ const Login = () => {
       await GoogleSignin.hasPlayServices({
         showPlayServicesUpdateDialog: true,
       });
-
+  
       const userInfo = await GoogleSignin.signIn();
-
+  
       const { user, idToken } = userInfo?.data;
-      // console.log("User Info", JSON.stringify(userInfo, null, 1));
-
+  
       // Create a Firebase credential using the ID token
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
+  
       // Sign in to Firebase with the credential
       const firebaseUserCredential = await auth().signInWithCredential(
         googleCredential
       );
-
+  
       if (firebaseUserCredential?.user) {
-        const userData = {
-          userId: firebaseUserCredential?.user?.uid,
-          email: firebaseUserCredential?.user?.email,
-          userName: firebaseUserCredential.user.displayName,
-          dues: 0,
-          createdAt: new Date().toISOString(),
-          friends: [],
-          chatRoomIds: [],
-        };
+        const userId = firebaseUserCredential?.user?.uid;
+        const userRef = firestore().collection("users").doc(userId);
+  
+        // Check if the user already exists in Firestore
+        const userDoc = await userRef.get();
+  
+        if (!userDoc.exists) {
+          // User does not exist, create a new document with initial data
+          const userData = {
+            userId,
+            email: firebaseUserCredential?.user?.email,
+            userName: firebaseUserCredential.user.displayName,
+            dues: 0,
+            createdAt: new Date().toISOString(),
+            friends: [],
+            chatRoomIds: [],
+          };
+  
+          await userRef.set(userData);
+        } else {
+          // User exists, update only the necessary fields (if needed)
+          const existingData = userDoc.data();
+          const updatedData = {
+            email: firebaseUserCredential?.user?.email,
+            userName: firebaseUserCredential.user.displayName,
+            updatedAt: new Date().toISOString(), // Add an updatedAt field
+          };
+  
+          // Merge the updated data with the existing data
+          await userRef.set(updatedData, { merge: true });
+        }
+  
         // Dispatch the user data to Redux (if required)
         dispatch(setUser(firebaseUserCredential.user));
-        await firestore()
-          .collection("users") // Adjust the collection name if needed
-          .doc(userData.userId) // Use the UID as the document ID
-          .set(userData, { merge: true });
       }
     } catch (error) {
       console.error("Error", "Failed to sign in with Google", error);

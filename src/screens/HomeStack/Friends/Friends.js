@@ -11,6 +11,7 @@ import { showError } from "../../../utils/MessageHandlers";
 import {
   getChatRoomIdForFriend,
   getCurrentUserFromDB,
+  getFriendsChatRoomDocForUser,
   getFriendsDocForUser,
 } from "../../../services/queries";
 import { useNavigation } from "@react-navigation/native";
@@ -44,7 +45,7 @@ const Friends = () => {
   const getUserFriends = async () => {
     try {
       // GET FRIENDS
-      const newFriends = await getFriendsDocForUser();
+      const newFriends = await getFriendsChatRoomDocForUser();
       setFriends(newFriends);
     } catch (error) {
       showError("Something went wrong: ".concat(error.message));

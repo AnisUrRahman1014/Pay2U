@@ -83,8 +83,34 @@ const AddFriendForm = ({ formRef }) => {
       // Step 8: Update the current user's document with the new friends array
       await userDocRef.update({
         friends: currentUserFriends,
-        chatRoomIds
+        chatRoomIds,
       });
+
+      // Step 9: Update the foundUser's document to include the current user in their friends list
+      const foundUserDocRef = firestore()
+        .collection(FirebaseContants.users)
+        .doc(foundUser.userId);
+
+      const foundUserDoc = await foundUserDocRef.get();
+      if (!foundUserDoc.exists) {
+        console.log("Found user document does not exist");
+        showError("Found user document does not exist");
+        return;
+      }
+
+      const foundUserData = foundUserDoc.data();
+      let foundUserFriends = foundUserData?.friends || [];
+      let foundUserChatRoomIds = foundUserData?.chatRoomIds || [];
+
+      if (!foundUserFriends.includes(userId)) {
+        foundUserFriends.push(userId);
+        foundUserChatRoomIds.push(chatDoc.id);
+
+        await foundUserDocRef.update({
+          friends: foundUserFriends,
+          chatRoomIds: foundUserChatRoomIds,
+        });
+      }
       const chatRoomMembers = [];
       chatRoomMembers.push(userId);
       chatRoomMembers.push(foundUser?.userId);
@@ -92,15 +118,15 @@ const AddFriendForm = ({ formRef }) => {
       await chatDocRef.set({
         id: chatDoc.id,
         users: chatRoomMembers,
-        type: 'friends',
+        type: "friends",
         receipts: [],
         totalDues: 0,
         createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      })
+        updatedAt: new Date().toISOString(),
+      });
 
       showSuccess("Friend added successfully");
-      formRef.current.hide()
+      formRef.current.hide();
     } catch (error) {
       showError("Something went wrong: ".concat(error.message));
     }

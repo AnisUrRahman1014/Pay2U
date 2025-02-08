@@ -1,4 +1,4 @@
-import { View, Text, SafeAreaView, ScrollView } from "react-native";
+import { View, Text, SafeAreaView, ScrollView, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import styles from "./Styles";
 import GeneralHeader from "../../../components/Headers/GeneralHeader/GeneralHeader";
@@ -15,7 +15,7 @@ const ChooseMembers = (props) => {
   const { navigation } = props;
   const { receipt } = props?.route?.params;
   const [friends, setFriends] = useState([]);
-  console.log(JSON.stringify(receipt, null, 1))
+  // console.log(JSON.stringify(receipt, null, 1));
 
   useEffect(() => {
     getUserFriends();
@@ -34,14 +34,25 @@ const ChooseMembers = (props) => {
   const openChatRoom = async (friend) => {
     try {
       let roomId = await getChatRoomIdForFriend(friend.userId);
-      const response = await addReceiptToChatRoom(roomId, receipt);
-      if (response?.success) {
-        navigation.navigate("ChatRoom", {
-          roomId,
-          friend,
-        });
-        showSuccess(response.message)
-      }
+      Alert.alert("Confirmation", "Add receipt to chat room?", [
+        {
+          text: "Cancel",
+          onPress: () => {},
+        },
+        {
+          text: "Confirm",
+          onPress: async () => {
+            const response = await addReceiptToChatRoom(roomId, receipt);
+            if (response?.success) {
+              navigation.navigate("ChatRoom", {
+                roomId,
+                friend,
+              });
+              showSuccess(response.message);
+            }
+          },
+        },
+      ]);
     } catch (error) {
       showError("Error accessing chat room: ".concat(error.message));
     }

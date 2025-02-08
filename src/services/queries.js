@@ -2,6 +2,7 @@ import auth from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
 import { FirebaseContants } from "../utils/Global";
 
+// User
 export const getCurrentUserFromDB = async () => {
   try {
     const userId = auth().currentUser.uid;
@@ -26,6 +27,7 @@ export const getCurrentUserFromDB = async () => {
 export const getFriendsChatRoomDocForUser = async () => {
   try {
     const userId = auth().currentUser.uid;
+
     if (!userId) {
       throw Error("Can't get user id from the auth");
     }
@@ -39,6 +41,7 @@ export const getFriendsChatRoomDocForUser = async () => {
     const userData = documentRef.data();
     const friendIds = userData.friends || [];
     const friendDocs = [];
+    console.log(friendIds)
 
     for (friendID of friendIds) {
       const friendDocRef = await firestore()
@@ -114,6 +117,27 @@ export const getFriendsDocForUser = async () => {
   }
 };
 
+export const getUserById = async (userId) => {
+  try {
+    if (!userId) {
+      throw Error("User Id required");
+    }
+    const documentRef = await firestore()
+      .collection(FirebaseContants.users)
+      .doc(userId)
+      .get();
+    if (!documentRef) {
+      throw Error("No document found for user");
+    }
+    const userData = documentRef.data();
+    return userData;
+  } catch (error) {
+    console.log("Error getting current user ", error);
+    throw Error(error);
+  }
+};
+
+// Chat Rooms
 export const getChatRoomIdForFriend = async (friendId) => {
   try {
     // Step 1: Get the current user's ID

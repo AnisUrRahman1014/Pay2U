@@ -52,7 +52,7 @@ const ConfirmReceipt = (props) => {
           orderedItems,
         },
       ],
-      paidBy: isPaidFirst ? userId : undefined
+      paidBy: isPaidFirst ? userId : null
     };
     navigation.navigate("ChooseMembers", {
       receipt
