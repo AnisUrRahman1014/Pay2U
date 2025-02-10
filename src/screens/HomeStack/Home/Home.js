@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppColors } from "../../../utils/Global";
 import styles from "./Styles";
@@ -9,9 +9,12 @@ import { moderateScale } from "react-native-size-matters";
 import { useNavigation } from "@react-navigation/native";
 import ContactViewCard from "../../../components/ContactViewCard/ContactViewCard";
 import PieChart from "react-native-pie-chart";
+import { showError } from "../../../utils/MessageHandlers";
+import { getCurrentUserFromDB } from "../../../services/queries";
 
 const Home = () => {
   const navigation = useNavigation();
+  const [user, setUser] = useState(null);
   const [groups, setGroups] = useState([
     {
       name: "Apple",
@@ -52,12 +55,25 @@ const Home = () => {
       dues: "Pending",
     },
   ]);
+  
+  useEffect(()=>{
+    getUser();
+  },[])
+  
+  const getUser= async()=>{
+    try{
+      const user = await getCurrentUserFromDB();
+      setUser(user);
+    }catch(error){
+      showError('Error getting user '.concat(error.message))
+    }
+  }
+  
   const series = [
-    { value: 230, color: "#fbd203", label: { text: "Balance" } },
-    { value: 210, color: "#ffb300", label: { text: "Debit" } },
-    { value: 30, color: "#ff9100", label: { text: "Credit" } },
+    { value: user?.balance, color: "#fbd203", label: { text: "Balance" } },
+    { value: user?.debit, color: "#ffb300", label: { text: "Debit" } },
+    { value: user?.credit, color: "#ff9100", label: { text: "Credit" } },
   ];
-
   return (
     <SafeAreaView style={styles.mainContainer}>
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
@@ -70,9 +86,9 @@ const Home = () => {
             />
           </View>
           <View style={styles.rightCtn}>
-            <Text style={styles.balance}>$230.00</Text>
-            <Text style={styles.debit}>$210.00</Text>
-            <Text style={styles.credit}>$30.00</Text>
+            <Text style={styles.balance}>${user?.balance}</Text>
+            <Text style={styles.debit}>${user?.debit}</Text>
+            <Text style={styles.credit}>${user?.credit}</Text>
           </View>
         </View>
 

@@ -22,6 +22,7 @@ import NativeInput from "../../../components/NativeInput/NativeInput";
 import * as Yup from "yup";
 import { moderateScale } from "react-native-size-matters";
 import { showError } from "../../../utils/MessageHandlers";
+import { CommonActions } from "@react-navigation/native";
 
 const AddReceipt = (props) => {
   const { navigation } = props;
@@ -221,11 +222,24 @@ const AddReceipt = (props) => {
     navigation.navigate("ConfirmReceipt", {
       items,
     });
+    
+  };
+
+  const confirmExit = () => {
+    Alert.alert("Confirmation", "Are you sure you want to exit?", [
+      { text: "Cancel", onPress: () => {} },
+      {
+        text: "Yes, exit",
+        onPress: () => {
+          navigation.goBack();
+        },
+      },
+    ]);
   };
 
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <GeneralHeader header={"Add New Receipt"} />
+      <GeneralHeader header={"Add New Receipt"} leftIconOnPress={confirmExit}/>
       <Formik
         initialValues={{
           name: "",

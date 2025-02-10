@@ -8,8 +8,8 @@ const styles = StyleSheet.create({
     backgroundColor: Theme.colors.MidGrey4,
     width: "90%",
     alignSelf: "center",
-    marginVertical: moderateScale(10),
     flexDirection: "row",
+    marginVertical: moderateScale(10),
     borderRadius: moderateScale(20),
     paddingVertical: moderateScale(10),
     paddingLeft: moderateScale(5),
@@ -39,6 +39,16 @@ const styles = StyleSheet.create({
   },
   btnTxt:{
     color: AppColors.White
+  },
+  status:{
+    alignSelf: 'flex-end',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  label:{
+    fontFamily: 'Lato-Bold',
+    fontSize: moderateScale(14),
+    textTransform: 'uppercase'
   }
 });
 

@@ -3,14 +3,16 @@ import React, { useEffect, useState } from "react";
 import styles from "./Styles";
 import Images from "../../../assets/images";
 import TextWrapper from "../TextWrapper/TextWrapper";
-import { showError } from "../../utils/MessageHandlers";
+import { showError, showSuccess } from "../../utils/MessageHandlers";
 import { getUserById } from "../../services/queries";
-import { formateDate } from "../../utils/Global";
+import { AppColors, formateDate } from "../../utils/Global";
 import { FlatList } from "react-native-actions-sheet";
 import ReceiptItem from "../ReceiptItem/ReceiptItem";
 import CustomButton from "../CustomButton/CustomButton";
 import { finalizeItems, payFirst, payMyShare } from "../../services/mutations";
 import { useSelector } from "react-redux";
+import { AppIcons } from "../../libs";
+import { moderateScale } from "react-native-size-matters";
 
 const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
   const currentUser = useSelector((state) => state?.persistSlice?.user);
@@ -23,6 +25,7 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
   const [receiptFinalized, setReceiptFinalized] = useState(false);
   const [hadPaidFirst, setHadPaidFirst] = useState(false);
   const [myShare, setMyShare] = useState(null);
+  const [duesPaid, setDuesPaid] = useState(false);
 
   console.log(JSON.stringify(receiptData, null, 1));
 
@@ -39,8 +42,8 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
       if (receiptData?.paidBy) {
         const paidBy = await getUserById(receiptData?.paidBy);
         setPaidByUser(paidBy);
-        if(paidBy.userId === userId){
-            setHadPaidFirst(true);
+        if (paidBy.userId === userId) {
+          setHadPaidFirst(true);
         }
       }
       const createdBy = await getUserById(receiptData?.createdby);
@@ -56,8 +59,9 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
       userItems.forEach((user) => {
         if (user.userId === userId) {
           setIsOrderFinalized(true); //TODO: MAKE IT TRUE
-          setCheckedItems(user?.orderedItems)
+          setCheckedItems(user?.orderedItems);
           setMyShare(user?.myShare);
+          setDuesPaid(user?.paid);
           return;
         }
       });
@@ -70,9 +74,11 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
     }
   };
 
-  const handleFinalize = async () => {2
+  const handleFinalize = async () => {
     try {
-      await finalizeItems(chatId, receiptData?.id, checkedItems);
+      const response  = await finalizeItems(chatId, receiptData?.id, checkedItems);
+      showSuccess(response.message);
+
     } catch (error) {
       showError("Failed to pay. ".concat(error.message));
     }
@@ -93,19 +99,22 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
 
   const handlePayFirst = async () => {
     try {
-      await payFirst(chatId, receiptData?.id);
+      const response = await payFirst(chatId, receiptData?.id);
+      showSuccess(response.message);
+
     } catch (error) {
       showError("Failed to pay. ".concat(error.message));
     }
   };
 
-  const handlePayShare = async()=> {
-    try{
-      await payMyShare(chatId, receiptData?.id)
-    }catch(error){
-      showError('Error paying your share: '.concat(error?.message));
+  const handlePayShare = async () => {
+    try {
+      const response = await payMyShare(chatId, receiptData?.id);
+      showSuccess(response.message);
+    } catch (error) {
+      showError("Error paying your share: ".concat(error?.message));
     }
-  }
+  };
 
   return (
     <View style={styles.mainContainer}>
@@ -135,11 +144,11 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
           data={receiptData?.items}
           renderItem={({ item, index }) => {
             let manualCheck = false;
-            checkedItems.forEach((temp)=>{
-                if(temp.itemName === item.itemName){
-                    manualCheck=true;
-                }
-            })
+            checkedItems.forEach((temp) => {
+              if (temp.itemName === item.itemName) {
+                manualCheck = true;
+              }
+            });
             return (
               <ReceiptItem
                 key={index}
@@ -151,15 +160,20 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
             );
           }}
         />
-        {myShare && <TextWrapper title={"Your share:"} desc={`$ ${myShare}`} priority={1.2}/>}
+        {myShare && (
+          <TextWrapper
+            title={"Your share:"}
+            desc={`$ ${myShare}`}
+            priority={1.2}
+          />
+        )}
 
-        {(
-          !isOrderFinalized) && (
-            <CustomButton label={"Finalize"} onPress={handleFinalize} />
-          )}
+        {!isOrderFinalized && (
+          <CustomButton label={"Finalize"} onPress={handleFinalize} />
+        )}
 
         {/* Pay first if no one has paid */}
-        {(!receiptData?.paidBy || receiptData?.paidBy === null) &&(
+        {(!receiptData?.paidBy || receiptData?.paidBy === null) && (
           <CustomButton
             label={"Pay First"}
             containerStyles={styles.btn}
@@ -168,13 +182,27 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
           />
         )}
 
-        {receiptData?.paidBy && receiptFinalized && !hadPaidFirst && (
-          <CustomButton
-            label={`Pay Your Share to '${paidByUser?.userName}'`}
-            containerStyles={styles.btn}
-            labelStyles={styles.btnTxt}
-            onPress={handlePayShare}
-          />
+        {receiptData?.paidBy &&
+          receiptFinalized &&
+          !hadPaidFirst &&
+          !duesPaid && (
+            <CustomButton
+              label={`Pay Your Share to '${paidByUser?.userName}'`}
+              containerStyles={styles.btn}
+              labelStyles={styles.btnTxt}
+              onPress={handlePayShare}
+            />
+          )}
+
+        {(duesPaid || hadPaidFirst) && (
+          <View style={styles.status}>
+            <AppIcons.PaidIcon
+              size={moderateScale(25)}
+              color={AppColors.Primary}
+              disabled
+            />
+            <Text style={styles.label}>Paid</Text>
+          </View>
         )}
       </View>
     </View>

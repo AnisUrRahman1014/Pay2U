@@ -10,6 +10,7 @@ import {
   getFriendsDocForUser,
 } from "../../../services/queries";
 import { addReceiptToChatRoom } from "../../../services/mutations";
+import { CommonActions } from "@react-navigation/native";
 
 const ChooseMembers = (props) => {
   const { navigation } = props;
@@ -47,6 +48,7 @@ const ChooseMembers = (props) => {
               navigation.navigate("ChatRoom", {
                 roomId,
                 friend,
+                navigatedFrom: 'receiptStack'
               });
               showSuccess(response.message);
             }

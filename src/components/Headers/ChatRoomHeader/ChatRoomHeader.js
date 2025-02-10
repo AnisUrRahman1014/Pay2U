@@ -6,7 +6,7 @@ import { moderateScale } from "react-native-size-matters";
 import { AppColors } from "../../../utils/Global";
 import { useNavigation } from "@react-navigation/native";
 
-const ChatRoomHeader = ({ title, rightComp }) => {
+const ChatRoomHeader = ({ title, rightComp, leftIconOnPress }) => {
   const navigation = useNavigation();
   return (
     <View style={styles.header}>
@@ -17,7 +17,7 @@ const ChatRoomHeader = ({ title, rightComp }) => {
           marginHorizontal: moderateScale(5),
           width: 50,
         }}
-        onPress={()=>navigation.goBack()}
+        onPress={leftIconOnPress ? leftIconOnPress : ()=>navigation.goBack()}
       />
       <Text style={styles.title}>{title}</Text>
       {rightComp && rightComp()}

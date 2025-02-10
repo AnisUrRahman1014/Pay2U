@@ -91,6 +91,7 @@ export const payFirst = async (chatId, receiptId) => {
     const updatedReceipt = {
       ...receipts[chosenReceiptIndex],
       paidBy: userId, // Set the paidBy field to the current user's ID
+      updatedAt: new Date().toISOString()
     };
 
     // Update the receipts array
@@ -185,6 +186,7 @@ export const finalizeItems = async (chatId, receiptId, orderedItems) => {
     const updatedReceipt = {
       ...chosenReceipt,
       userItems: updatedUserItems,
+      updatedAt: new Date().toISOString()
     };
 
     // Check if all the members have finalized their order
@@ -219,6 +221,52 @@ export const finalizeItems = async (chatId, receiptId, orderedItems) => {
 
       // Update the receipt with the userItems containing myShare
       updatedReceipt.userItems = userItemsWithShare;
+
+      // Calculate the total amount to be paid to the paidBy user
+      const totalAmountToPaidByUser = userItemsWithShare.reduce(
+        (total, userItem) => total + userItem.myShare,
+        0
+      );
+
+      // Update the paidBy user's debit field
+      const paidByUserDocRef = firestore()
+        .collection(FirebaseContants.users)
+        .doc(chosenReceipt.paidBy);
+      const paidByUserDoc = await paidByUserDocRef.get();
+
+      if (!paidByUserDoc.exists) {
+        throw Error("PaidBy user not found in DB");
+      }
+
+      const paidByUserData = paidByUserDoc.data();
+      const updatedDebit =
+        (paidByUserData.debit || 0) + totalAmountToPaidByUser;
+
+      await paidByUserDocRef.update({
+        debit: updatedDebit,
+      });
+
+      // Update each member's credit field
+      const updateUserPromises = userItemsWithShare.map(async (userItem) => {
+        const userDocRef = firestore()
+          .collection(FirebaseContants.users)
+          .doc(userItem.userId);
+        const userDoc = await userDocRef.get();
+
+        if (!userDoc.exists) {
+          throw Error(`User ${userItem.userId} not found in DB`);
+        }
+
+        const userData = userDoc.data();
+        const updatedCredit = (userData.credit || 0) + userItem.myShare;
+
+        return userDocRef.update({
+          credit: updatedCredit,
+        });
+      });
+
+      // Wait for all user updates to complete
+      await Promise.all(updateUserPromises);
     }
 
     // Update the receipts array
@@ -306,6 +354,22 @@ export const payMyShare = async (chatId, receiptId) => {
     const newBalance = paidUserBalance + currentUserShare;
     const newDebit = paidUserDebit - currentUserShare;
 
+    // Get the current user's document
+    const currentUserDocRef = firestore()
+      .collection(FirebaseContants.users)
+      .doc(userId);
+    const currentUserDoc = await currentUserDocRef.get();
+
+    if (!currentUserDoc.exists) {
+      throw Error("Current user not found in DB");
+    }
+
+    const currentUserData = currentUserDoc.data();
+    const currentUserCredit = currentUserData?.credit || 0;
+
+    // Calculate new credit for the current user
+    const newCredit = currentUserCredit - currentUserShare;
+
     // Update the current user's record in userItems
     const updatedUserItems = [...userItems];
     updatedUserItems[userItemIndex] = {
@@ -318,6 +382,7 @@ export const payMyShare = async (chatId, receiptId) => {
     const updatedReceipt = {
       ...chosenReceipt,
       userItems: updatedUserItems,
+      updatedAt: new Date().toISOString()
     };
 
     // Update the receipts array
@@ -330,6 +395,11 @@ export const payMyShare = async (chatId, receiptId) => {
       paidByUserDocRef.update({
         balance: newBalance,
         debit: newDebit,
+      }),
+
+      // Update the current user's credit
+      currentUserDocRef.update({
+        credit: newCredit,
       }),
 
       // Update the chat room's receipts array

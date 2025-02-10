@@ -6,7 +6,7 @@ import { AppIcons } from "../../../libs";
 import { AppColors } from "../../../utils/Global";
 import { moderateScale } from "react-native-size-matters";
 
-const GeneralHeader = ({ header, rightComp }) => {
+const GeneralHeader = ({ header, rightComp, leftIconOnPress }) => {
   const navigation = useNavigation();
   return (
     <View style={styles.headerCtn}>
@@ -14,7 +14,7 @@ const GeneralHeader = ({ header, rightComp }) => {
         <AppIcons.BackIcon1
           size={moderateScale(25)}
           color={AppColors.iconColor}
-          onPress={() => navigation.goBack()}
+          onPress={leftIconOnPress ?  leftIconOnPress : () => navigation.goBack()}
         />
         {header && <Text style={styles.header}>{header}</Text>}
       </View>

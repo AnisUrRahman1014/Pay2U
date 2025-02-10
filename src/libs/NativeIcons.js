@@ -94,6 +94,7 @@ const AppIcons = {
   AddIcon: createIcon(Ionicons, "add"),
   GroupDummyIcon: createIcon(MaterialCommunityIcons, 'account-group'),
   CrossIcon: createIcon(Entypo, 'cross'),
+  PaidIcon: createIcon(MaterialIcons, 'paid'),
 };
 
 export default AppIcons;
