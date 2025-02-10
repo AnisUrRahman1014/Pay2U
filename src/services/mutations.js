@@ -187,6 +187,40 @@ export const finalizeItems = async (chatId, receiptId, orderedItems) => {
       userItems: updatedUserItems,
     };
 
+    // Check if all the members have finalized their order
+    if (updatedReceipt?.userItems?.length === chatRoomData?.users?.length) {
+      // Calculate each user's share of the bill
+      const items = updatedReceipt.items || [];
+      const userItemsWithShare = updatedReceipt.userItems.map((userItem) => {
+        let myShare = 0;
+
+        // Iterate through the user's ordered items
+        userItem.orderedItems.forEach((orderedItem) => {
+          // Find the corresponding item in the receipt's items list
+          const item = items.find((i) => i.itemName === orderedItem.itemName);
+
+          if (item) {
+            // Calculate the number of users who ordered this item
+            const usersWhoOrderedItem = updatedReceipt.userItems.filter((ui) =>
+              ui.orderedItems.some((oi) => oi.itemName === orderedItem.itemName)
+            ).length;
+
+            // Divide the item's price among the users who ordered it
+            myShare += parseFloat(item.price) / usersWhoOrderedItem;
+          }
+        });
+
+        // Add the calculated share to the user's object
+        return {
+          ...userItem,
+          myShare: parseFloat(myShare.toFixed(2)), // Round to 2 decimal places
+        };
+      });
+
+      // Update the receipt with the userItems containing myShare
+      updatedReceipt.userItems = userItemsWithShare;
+    }
+
     // Update the receipts array
     const updatedReceipts = [...receipts];
     updatedReceipts[chosenReceiptIndex] = updatedReceipt;
@@ -195,6 +229,114 @@ export const finalizeItems = async (chatId, receiptId, orderedItems) => {
     await chatRoomRef.update({
       receipts: updatedReceipts,
     });
+
+    console.log("Receipt updated successfully");
+    return { success: true, message: "Receipt updated successfully" };
+  } catch (error) {
+    console.error("Error updating receipt:", error);
+    throw Error(error);
+  }
+};
+
+export const payMyShare = async (chatId, receiptId) => {
+  try {
+    const userId = auth().currentUser.uid;
+
+    // Validate inputs
+    if (!chatId || !receiptId) {
+      throw Error("ChatId or ReceiptId is missing");
+    }
+
+    // Get the chat room document
+    const chatRoomRef = firestore()
+      .collection(FirebaseContants.chats)
+      .doc(chatId);
+    const chatRoomDoc = await chatRoomRef.get();
+
+    if (!chatRoomDoc.exists) {
+      throw Error("Chat room not found in DB");
+    }
+
+    const chatRoomData = chatRoomDoc.data();
+    const receipts = chatRoomData.receipts || [];
+
+    // Find the chosen receipt
+    const chosenReceiptIndex = receipts.findIndex(
+      (receipt) => receipt.id === receiptId
+    );
+
+    if (chosenReceiptIndex === -1) {
+      throw Error("Receipt not found in this chat room");
+    }
+
+    const chosenReceipt = receipts[chosenReceiptIndex];
+    const userItems = chosenReceipt.userItems || [];
+
+    // Check if the user already has an entry in userItems
+    const userItemIndex = userItems.findIndex(
+      (userItem) => userItem.userId === userId
+    );
+
+    if (userItemIndex === -1) {
+      throw Error("Cannot find user in the userItems list");
+    }
+
+    const currentUserRecord = userItems[userItemIndex];
+    const currentUserShare = currentUserRecord.myShare || 0;
+
+    if (currentUserShare <= 0) {
+      throw Error("User's share is not valid or already paid");
+    }
+
+    // Get the paidBy user's document
+    const paidByUserDocRef = firestore()
+      .collection(FirebaseContants.users)
+      .doc(chosenReceipt?.paidBy);
+    const paidByUserDoc = await paidByUserDocRef.get();
+
+    if (!paidByUserDoc.exists) {
+      throw Error("PaidBy user not found in DB");
+    }
+
+    const paidByUser = paidByUserDoc.data();
+    const paidUserBalance = paidByUser?.balance || 0;
+    const paidUserDebit = paidByUser?.debit || 0;
+
+    // Calculate new balance and debit for the paidBy user
+    const newBalance = paidUserBalance + currentUserShare;
+    const newDebit = paidUserDebit - currentUserShare;
+
+    // Update the current user's record in userItems
+    const updatedUserItems = [...userItems];
+    updatedUserItems[userItemIndex] = {
+      ...currentUserRecord,
+      paid: true,
+      paidAt: new Date().toISOString(),
+    };
+
+    // Update the chosen receipt
+    const updatedReceipt = {
+      ...chosenReceipt,
+      userItems: updatedUserItems,
+    };
+
+    // Update the receipts array
+    const updatedReceipts = [...receipts];
+    updatedReceipts[chosenReceiptIndex] = updatedReceipt;
+
+    // Use Promise.all to handle concurrent Firestore updates
+    await Promise.all([
+      // Update the paidBy user's balance and debit
+      paidByUserDocRef.update({
+        balance: newBalance,
+        debit: newDebit,
+      }),
+
+      // Update the chat room's receipts array
+      chatRoomRef.update({
+        receipts: updatedReceipts,
+      }),
+    ]);
 
     console.log("Receipt updated successfully");
     return { success: true, message: "Receipt updated successfully" };

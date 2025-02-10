@@ -9,14 +9,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginVertical: moderateScale(2)
   },
-  title: {
+  title: priority => ({
     fontFamily: "Lato-Bold",
-    fontSize: moderateScale(12),
-  },
-  desc: {
+    fontSize: moderateScale(12 * priority),
+  }),
+  desc: priority => ({
     fontFamily: "Lato-Regular",
-    fontSize: moderateScale(12),
-  },
+    fontSize: moderateScale(12 * priority),
+  }),
 });
 
 export default styles;

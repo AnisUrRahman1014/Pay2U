@@ -9,7 +9,7 @@ import { formateDate } from "../../utils/Global";
 import { FlatList } from "react-native-actions-sheet";
 import ReceiptItem from "../ReceiptItem/ReceiptItem";
 import CustomButton from "../CustomButton/CustomButton";
-import { finalizeItems, payFirst } from "../../services/mutations";
+import { finalizeItems, payFirst, payMyShare } from "../../services/mutations";
 import { useSelector } from "react-redux";
 
 const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
@@ -22,6 +22,9 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
   const [isOrderFinalized, setIsOrderFinalized] = useState(false);
   const [receiptFinalized, setReceiptFinalized] = useState(false);
   const [hadPaidFirst, setHadPaidFirst] = useState(false);
+  const [myShare, setMyShare] = useState(null);
+
+  console.log(JSON.stringify(receiptData, null, 1));
 
   useEffect(() => {
     if (receiptData) {
@@ -54,6 +57,7 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
         if (user.userId === userId) {
           setIsOrderFinalized(true); //TODO: MAKE IT TRUE
           setCheckedItems(user?.orderedItems)
+          setMyShare(user?.myShare);
           return;
         }
       });
@@ -66,15 +70,7 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
     }
   };
 
-  const handlePayFirst = async () => {
-    try {
-      await payFirst(chatId, receiptData?.id);
-    } catch (error) {
-      showError("Failed to pay. ".concat(error.message));
-    }
-  };
-
-  const handleFinalize = async () => {
+  const handleFinalize = async () => {2
     try {
       await finalizeItems(chatId, receiptData?.id, checkedItems);
     } catch (error) {
@@ -94,6 +90,22 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
       );
     }
   };
+
+  const handlePayFirst = async () => {
+    try {
+      await payFirst(chatId, receiptData?.id);
+    } catch (error) {
+      showError("Failed to pay. ".concat(error.message));
+    }
+  };
+
+  const handlePayShare = async()=> {
+    try{
+      await payMyShare(chatId, receiptData?.id)
+    }catch(error){
+      showError('Error paying your share: '.concat(error?.message));
+    }
+  }
 
   return (
     <View style={styles.mainContainer}>
@@ -139,6 +151,7 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
             );
           }}
         />
+        {myShare && <TextWrapper title={"Your share:"} desc={`$ ${myShare}`} priority={1.2}/>}
 
         {(
           !isOrderFinalized) && (
@@ -157,10 +170,10 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
 
         {receiptData?.paidBy && receiptFinalized && !hadPaidFirst && (
           <CustomButton
-            label={"Pay Your Share"}
+            label={`Pay Your Share to '${paidByUser?.userName}'`}
             containerStyles={styles.btn}
             labelStyles={styles.btnTxt}
-            onPress={handlePayFirst}
+            onPress={handlePayShare}
           />
         )}
       </View>
