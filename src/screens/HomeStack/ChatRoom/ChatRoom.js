@@ -6,10 +6,12 @@ import { showError } from "../../../utils/MessageHandlers";
 import firestore from "@react-native-firebase/firestore";
 import { FirebaseContants } from "../../../utils/Global";
 import ReceiptCard from "../../../components/ReceiptCard/ReceiptCard";
+import { AppIcons } from "../../../libs";
+import { moderateScale } from "react-native-size-matters";
 
 const ChatRoom = (props) => {
   const { navigation } = props;
-  const { roomId, friend, navigatedFrom } = props?.route?.params; // State to store chat room data
+  const { roomId, friend, navigatedFrom, group } = props?.route?.params; // State to store chat room data
   const [receipts, setReceipts] = useState([]); // State for receipts (if needed)
   const [totalMembers, setTotalMembers] = useState(0);
 
@@ -24,7 +26,7 @@ const ChatRoom = (props) => {
             // Update the chat room state with the latest data
             const chatRoomData = snapshot.data();
             setReceipts(chatRoomData?.receipts);
-            setTotalMembers(chatRoomData?.users?.length);
+            setTotalMembers(chatRoomData?.users?.length || 0);
           } else {
             showError("Chat room not found");
           }
@@ -41,26 +43,33 @@ const ChatRoom = (props) => {
   return (
     <SafeAreaView style={styles.rootContainer}>
       <ChatRoomHeader
-        title={friend?.userName}
+        title={friend?.userName || group?.name}
         leftIconOnPress={
           navigatedFrom === "receiptStack"
             ? () => navigation.navigate("BottomTabsNav")
             : undefined
         }
       />
-      <FlatList
-        data={receipts}
-        renderItem={({ item, index }) => {
-          return (
-            <ReceiptCard
-              key={index}
-              receiptData={item}
-              chatId={roomId}
-              totalMembers={totalMembers}
-            />
-          );
-        }}
-      />
+      {receipts?.length > 0 ? (
+        <FlatList
+          data={receipts}
+          renderItem={({ item, index }) => {
+            return (
+              <ReceiptCard
+                key={index}
+                receiptData={item}
+                chatId={roomId}
+                totalMembers={totalMembers}
+              />
+            );
+          }}
+        />
+      ) : (
+        <View style={styles.noReceiptCtn}>
+        <AppIcons.Nothing size={moderateScale(150)}/>
+          <Text style={styles.noReceiptTxt}>No receipts available yet</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

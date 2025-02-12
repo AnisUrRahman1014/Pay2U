@@ -42,6 +42,5 @@ export const formateDate = (dateString, withTime) => {
   const formattedDate = new Intl.DateTimeFormat("en-US", options).format(
     date
   );
-
   return formattedDate;
 };

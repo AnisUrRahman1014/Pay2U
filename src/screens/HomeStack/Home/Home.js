@@ -1,16 +1,16 @@
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AppColors } from "../../../utils/Global";
 import styles from "./Styles";
 import HeadingText from "../../../components/HeadingText/HeadingText";
 import { AppIcons } from "../../../libs";
 import { moderateScale } from "react-native-size-matters";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import ContactViewCard from "../../../components/ContactViewCard/ContactViewCard";
 import PieChart from "react-native-pie-chart";
 import { showError } from "../../../utils/MessageHandlers";
-import { getCurrentUserFromDB } from "../../../services/queries";
+import { getCurrentUserFromDB, getRecentFriendsChatRoomDocForUser, getRecentGroupChats } from "../../../services/queries";
 
 const Home = () => {
   const navigation = useNavigation();
@@ -55,24 +55,67 @@ const Home = () => {
       dues: "Pending",
     },
   ]);
-  
-  useEffect(()=>{
-    getUser();
-  },[])
-  
-  const getUser= async()=>{
-    try{
+
+  useFocusEffect(
+    useCallback(() => {
+      getUser();
+      getRecentFriends();
+      getRecentGroups();
+    }, [])
+  );
+
+  const getUser = async () => {
+    try {
       const user = await getCurrentUserFromDB();
       setUser(user);
+    } catch (error) {
+      showError("Error getting user ".concat(error.message));
+    }
+  };
+
+  const getRecentGroups = async()=>{
+    try{
+      const chats = await getRecentGroupChats();
+      setGroups(chats)
     }catch(error){
-      showError('Error getting user '.concat(error.message))
+      showError('Failed to get recent groups. '.concat(error.message))
     }
   }
-  
+
+  const getRecentFriends = async()=>{
+    try{
+      const friendss = await getRecentFriendsChatRoomDocForUser();
+      setFriends(friendss)
+    }catch(error){
+      showError('Failed to get recent friends. '.concat(error.message))
+    }
+  }
+
   const series = [
-    { value: user?.balance, color: "#fbd203", label: { text: "Balance" } },
-    { value: user?.debit, color: "#ffb300", label: { text: "Debit" } },
-    { value: user?.credit, color: "#ff9100", label: { text: "Credit" } },
+    {
+      value: user?.balance
+        ? user?.balance > 0
+          ? user?.balance
+          : user?.balance * -1
+        : 100,
+      color: "#fbd203",
+    },
+    {
+      value: user?.debit
+        ? user?.debit > 0
+          ? user?.debit
+          : user?.debit * -1
+        : 0,
+      color: "#ffb300",
+    },
+    {
+      value: user?.credit
+        ? user?.credit > 0
+          ? user?.credit
+          : user?.credit * -1
+        : 0,
+      color: "#ff9100",
+    },
   ];
   return (
     <SafeAreaView style={styles.mainContainer}>
@@ -86,9 +129,9 @@ const Home = () => {
             />
           </View>
           <View style={styles.rightCtn}>
-            <Text style={styles.balance}>${user?.balance}</Text>
-            <Text style={styles.debit}>${user?.debit}</Text>
-            <Text style={styles.credit}>${user?.credit}</Text>
+            <Text style={styles.balance}>$ {user?.balance || '---'}</Text>
+            <Text style={styles.debit}>$ {user?.debit || '---'}</Text>
+            <Text style={styles.credit}>$ {user?.credit || '---'}</Text>
           </View>
         </View>
 

@@ -47,6 +47,7 @@ export const addReceiptToChatRoom = async (roomId, receipt) => {
     // Step 7: Update the chat room document with the new receipts array
     await firestore().collection(FirebaseContants.chats).doc(roomId).update({
       receipts: receipts,
+      updatedAt: new Date().toISOString()
     });
 
     console.log("Receipt added successfully to chat room:", roomId);
@@ -91,7 +92,7 @@ export const payFirst = async (chatId, receiptId) => {
     const updatedReceipt = {
       ...receipts[chosenReceiptIndex],
       paidBy: userId, // Set the paidBy field to the current user's ID
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     // Update the receipts array
@@ -120,17 +121,17 @@ export const finalizeItems = async (chatId, receiptId, orderedItems) => {
       throw Error("ChatId or ReceiptId is missing");
     }
 
-    // Validate orderedItems
-    if (!Array.isArray(orderedItems) || orderedItems.length === 0) {
-      throw Error("Ordered items must be a non-empty array");
-    }
+    // // Validate orderedItems
+    // if (!Array.isArray(orderedItems) || orderedItems.length === 0) {
+    //   throw Error("Ordered items must be a non-empty array");
+    // }
 
-    // Validate each item in orderedItems
-    for (const item of orderedItems) {
-      if (!item.itemName || !item.price) {
-        throw Error("Each item must have an itemName and price");
-      }
-    }
+    // // Validate each item in orderedItems
+    // for (const item of orderedItems) {
+    //   if (!item.itemName || !item.price) {
+    //     throw Error("Each item must have an itemName and price");
+    //   }
+    // }
 
     // Get the chat room document
     const chatRoomRef = firestore()
@@ -186,7 +187,7 @@ export const finalizeItems = async (chatId, receiptId, orderedItems) => {
     const updatedReceipt = {
       ...chosenReceipt,
       userItems: updatedUserItems,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     // Check if all the members have finalized their order
@@ -347,12 +348,15 @@ export const payMyShare = async (chatId, receiptId) => {
     }
 
     const paidByUser = paidByUserDoc.data();
+    const paidByUserActivities = paidByUser?.activities || [];
     const paidUserBalance = paidByUser?.balance || 0;
     const paidUserDebit = paidByUser?.debit || 0;
 
     // Calculate new balance and debit for the paidBy user
     const newBalance = paidUserBalance + currentUserShare;
     const newDebit = paidUserDebit - currentUserShare;
+
+    
 
     // Get the current user's document
     const currentUserDocRef = firestore()
@@ -365,10 +369,25 @@ export const payMyShare = async (chatId, receiptId) => {
     }
 
     const currentUserData = currentUserDoc.data();
+    const currentUserActivities = currentUserData?.activities || [];
     const currentUserCredit = currentUserData?.credit || 0;
 
     // Calculate new credit for the current user
     const newCredit = currentUserCredit - currentUserShare;
+
+    const currentUserNewActivity = {
+      createdAt: new Date().toISOString(),
+      message: `You paid $ ${currentUserShare} to ${paidByUser?.userName}`,
+      type: 'sent'
+    }
+
+    const paidByUserNewActivity = {
+      createdAt: new Date().toISOString(),
+      message: `${currentUserData?.userName} paid $ ${currentUserShare} to you.`,
+      type: 'received'
+    }
+
+    currentUserActivities.push(currentUserNewActivity);
 
     // Update the current user's record in userItems
     const updatedUserItems = [...userItems];
@@ -382,7 +401,7 @@ export const payMyShare = async (chatId, receiptId) => {
     const updatedReceipt = {
       ...chosenReceipt,
       userItems: updatedUserItems,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     };
 
     // Update the receipts array
@@ -395,11 +414,13 @@ export const payMyShare = async (chatId, receiptId) => {
       paidByUserDocRef.update({
         balance: newBalance,
         debit: newDebit,
+        activities: paidByUserNewActivity
       }),
 
       // Update the current user's credit
       currentUserDocRef.update({
         credit: newCredit,
+        activities: currentUserActivities
       }),
 
       // Update the chat room's receipts array
@@ -412,6 +433,65 @@ export const payMyShare = async (chatId, receiptId) => {
     return { success: true, message: "Receipt updated successfully" };
   } catch (error) {
     console.error("Error updating receipt:", error);
+    throw Error(error);
+  }
+};
+
+export const createNewGroup = async (groupName, chosenFriends) => {
+  try {
+    const userId = auth().currentUser.uid;
+
+    // Step 1: Create a new chat room document
+    const chatDocRef = firestore().collection(FirebaseContants.chats).doc();
+    const chatRoomId = chatDocRef.id;
+
+    // Step 2: Prepare the list of users (current user + chosen friends)
+    const users = [userId, ...chosenFriends.map((friend) => friend.userId)];
+
+    // Step 3: Create the chat room document
+    await chatDocRef.set({
+      id: chatRoomId,
+      name: groupName, // Add the group name
+      users: users, // Add all user IDs
+      type: "group", // Specify the type as "group"
+      receipts: [], // Initialize receipts
+      totalDues: 0, // Initialize total dues
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    // Step 4: Update the groupChatIds for all users
+    const updatePromises = users.map(async (user) => {
+      const userDocRef = firestore()
+        .collection(FirebaseContants.users)
+        .doc(user);
+      const userDoc = await userDocRef.get();
+
+      if (!userDoc.exists) {
+        console.log(`User ${user} not found in DB`);
+        return;
+      }
+
+      const userData = userDoc.data();
+      const chatRoomIds = userData.chatRoomIds || [];  // Use chatRoomIds instead of groupChatIds
+
+      // Add the new chat room ID to the chatRoomIds array
+      if (!chatRoomIds.includes(chatRoomId)) {
+        chatRoomIds.push(chatRoomId);
+      }
+
+      // Update the user document with the updated chatRoomIds
+      await userDocRef.update({
+        chatRoomIds: chatRoomIds,
+      });
+    });
+
+    // Wait for all updates to complete
+    await Promise.all(updatePromises);
+
+    return { success: true, message: "Group created successfully" };
+  } catch (error) {
+    console.error("Error creating group:", error);
     throw Error(error);
   }
 };

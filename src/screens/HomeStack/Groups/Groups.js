@@ -1,33 +1,48 @@
 import { View, Text, ScrollView } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import HeadingText from "../../../components/HeadingText/HeadingText";
 import styles from "./Styles";
 import ContactViewCard from "../../../components/ContactViewCard/ContactViewCard";
 import { AppIcons } from "../../../libs";
 import { AppColors } from "../../../utils/Global";
+import NewGroupForm from "../../../components/ActionSheets/NewGroupForm/NewGroupForm";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { showError } from "../../../utils/MessageHandlers";
+import { getGroupChatRoomsDocForUser } from "../../../services/queries";
 
 const Groups = () => {
-  const [groups, setGroups] = useState([
-    {
-      name: "Apple",
-      members: 5,
-      updatedAt: new Date().toISOString(),
-      dues: "Cleared",
-    },
-    {
-      name: "Banana",
-      members: 8,
-      updatedAt: new Date().toISOString(),
-      dues: "Pending",
-    },
-    {
-      name: "Cherry",
-      members: 12,
-      updatedAt: new Date().toISOString(),
-      dues: "Cleared",
-    },
-  ]);
+  const navigation = useNavigation();
+  const newGroupFormRef = useRef();
+  const [groups, setGroups] = useState([]);
+
+  useFocusEffect(
+    useCallback(() => {
+      getGroupChats();
+    }, [])
+  );
+
+  const getGroupChats = async () => {
+    try {
+      const chats = await getGroupChatRoomsDocForUser();
+      setGroups(chats);
+    } catch (error) {
+      showError("Error getting group chats ".concat(error.message));
+    }
+  };
+
+  const openChatRoom = async (group) => {
+    try {
+      let roomId = group.id;
+      navigation.navigate("ChatRoom", {
+        roomId,
+        group,
+      });
+    } catch (error) {
+      showError("Error accessing chat room: ".concat(error.message));
+    }
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -39,13 +54,21 @@ const Groups = () => {
               size={25}
               color={AppColors.White}
               style={styles.icon}
+              onPress={() => newGroupFormRef.current.show()}
             />
           )}
         />
-        {groups.map((friend, index) => {
-          return <ContactViewCard key={index} data={friend} isFriendCard />;
+        {groups.map((group, index) => {
+          return (
+            <ContactViewCard
+              key={index}
+              data={group}
+              onPress={() => openChatRoom(group)}
+            />
+          );
         })}
       </ScrollView>
+      <NewGroupForm formRef={newGroupFormRef} />
     </SafeAreaView>
   );
 };

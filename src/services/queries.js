@@ -41,7 +41,7 @@ export const getFriendsChatRoomDocForUser = async () => {
     const userData = documentRef.data();
     const friendIds = userData.friends || [];
     const friendDocs = [];
-    console.log(friendIds)
+    console.log(friendIds);
 
     for (friendID of friendIds) {
       const friendDocRef = await firestore()
@@ -83,6 +83,76 @@ export const getFriendsChatRoomDocForUser = async () => {
     return friendDocs;
   } catch (error) {
     console.log("Error getting current user ", error);
+    throw Error(error);
+  }
+};
+
+export const getRecentFriendsChatRoomDocForUser = async () => {
+  try {
+    const userId = auth().currentUser.uid;
+
+    if (!userId) {
+      throw Error("Can't get user id from the auth");
+    }
+
+    const documentRef = await firestore()
+      .collection(FirebaseContants.users)
+      .doc(userId)
+      .get();
+    if (!documentRef.exists) {
+      throw Error("No document found for user");
+    }
+
+    const userData = documentRef.data();
+    const friendIds = userData.friends || [];
+    const friendDocs = [];
+    console.log(friendIds);
+
+    // Step 1: Fetch friends' documents
+    for (const friendID of friendIds) {
+      const friendDocRef = await firestore()
+        .collection(FirebaseContants.users)
+        .doc(friendID)
+        .get();
+      if (friendDocRef.exists) {
+        friendDocs.push({
+          ...friendDocRef.data(), // Friend's user data
+          chatData: null, // Placeholder for chat data
+        });
+      }
+    }
+
+    // Step 2: Query the chat rooms where the current user is a member and type is "friends"
+    const chatQuerySnapshot = await firestore()
+      .collection(FirebaseContants.chats)
+      .where("type", "==", "friends")
+      .where("users", "array-contains", userId)
+      .orderBy("updatedAt", "desc") // Order by updatedAt descending
+      .limit(3) // Limit to the 3 most recent chats
+      .get();
+
+    // Step 3: If chat documents are found, filter them by user and add chat data to the respective friend
+    if (!chatQuerySnapshot.empty) {
+      chatQuerySnapshot.forEach((doc) => {
+        const chatData = doc.data();
+        const users = chatData.users || [];
+
+        // Find the friend ID in the users array (excluding the current user ID)
+        const friendId = users.find((id) => id !== userId);
+
+        // Find the corresponding friend document in friendDocs
+        const friendDoc = friendDocs.find((doc) => doc.userId === friendId);
+
+        // If a matching friend document is found, merge the chat data
+        if (friendDoc) {
+          friendDoc.chatData = chatData;
+        }
+      });
+    }
+
+    return friendDocs;
+  } catch (error) {
+    console.log("Error getting friends' chat rooms: ", error);
     throw Error(error);
   }
 };
@@ -133,6 +203,34 @@ export const getUserById = async (userId) => {
     return userData;
   } catch (error) {
     console.log("Error getting current user ", error);
+    throw Error(error);
+  }
+};
+
+export const getActivitiesForUser = async () => {
+  try {
+    const userId = auth().currentUser.uid;
+    if (!userId) {
+      throw Error("Can't get user id from the auth");
+    }
+    const documentRef = await firestore()
+      .collection(FirebaseContants.users)
+      .doc(userId)
+      .get();
+    if (!documentRef) {
+      throw Error("No document found for user");
+    }
+    const userData = documentRef.data();
+    const activities = userData.activities || [];
+
+    const sortedActivities = activities.sort((a, b) => {
+      const dateA = new Date(a.createdAt); // Convert to Date object
+      const dateB = new Date(b.createdAt); // Convert to Date object
+      return dateB - dateA; // Sort in descending order
+    });
+
+    return sortedActivities;
+  } catch (error) {
     throw Error(error);
   }
 };
@@ -220,5 +318,82 @@ export const getChatRoomfromDB = async (roomId) => {
   } catch (error) {
     console.error("Error in getChatRoom:", error.message);
     throw Error(error.message); // Re-throw the error for further handling
+  }
+};
+
+// Groups
+export const getGroupChatRoomsDocForUser = async () => {
+  try {
+    const userId = auth().currentUser.uid;
+
+    if (!userId) {
+      throw Error("Can't get user id from the auth");
+    }
+    const documentRef = await firestore()
+      .collection(FirebaseContants.users)
+      .doc(userId)
+      .get();
+    if (!documentRef) {
+      throw Error("No document found for user");
+    }
+
+    const groupChats = [];
+
+    const chatQuerySnapshot = await firestore()
+      .collection(FirebaseContants.chats)
+      .where("type", "==", "group")
+      .where("users", "array-contains", userId)
+      .get();
+
+    // If documents are found, filter them to include only those where the users array also contains the friend ID
+    if (!chatQuerySnapshot.empty) {
+      chatQuerySnapshot.forEach((doc) => {
+        const chatData = doc.data();
+        groupChats.push(chatData);
+      });
+    }
+    return groupChats;
+  } catch (error) {
+    console.log("Error getting current user ", error);
+    throw Error(error);
+  }
+};
+
+export const getRecentGroupChats = async () => {
+  try {
+    const userId = auth().currentUser.uid;
+
+    if (!userId) {
+      throw Error("Can't get user id from the auth");
+    }
+    const documentRef = await firestore()
+      .collection(FirebaseContants.users)
+      .doc(userId)
+      .get();
+    if (!documentRef) {
+      throw Error("No document found for user");
+    }
+
+    const groupChats = [];
+
+    const chatQuerySnapshot = await firestore()
+      .collection(FirebaseContants.chats)
+      .where("type", "==", "group")
+      .where("users", "array-contains", userId)
+      .orderBy("updatedAt", "desc") // Order by updatedAt descending
+      .limit(3) // Limit to the 3 most recent
+      .get();
+
+    // If documents are found, filter them to include only those where the users array also contains the friend ID
+    if (!chatQuerySnapshot.empty) {
+      chatQuerySnapshot.forEach((doc) => {
+        const chatData = doc.data();
+        groupChats.push(chatData);
+      });
+    }
+    return groupChats;
+  } catch (error) {
+    console.log("Error getting current user ", error);
+    throw Error(error);
   }
 };

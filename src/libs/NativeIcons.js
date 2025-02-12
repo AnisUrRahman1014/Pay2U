@@ -95,6 +95,7 @@ const AppIcons = {
   GroupDummyIcon: createIcon(MaterialCommunityIcons, 'account-group'),
   CrossIcon: createIcon(Entypo, 'cross'),
   PaidIcon: createIcon(MaterialIcons, 'paid'),
+  Nothing: createIcon(Entypo,'emoji-sad')
 };
 
 export default AppIcons;

@@ -8,18 +8,22 @@ import {
   getChatRoomIdForFriend,
   getFriendsChatRoomDocForUser,
   getFriendsDocForUser,
+  getGroupChatRoomsDocForUser,
 } from "../../../services/queries";
 import { addReceiptToChatRoom } from "../../../services/mutations";
 import { CommonActions } from "@react-navigation/native";
+import HeadingText from "../../../components/HeadingText/HeadingText";
 
 const ChooseMembers = (props) => {
   const { navigation } = props;
   const { receipt } = props?.route?.params;
   const [friends, setFriends] = useState([]);
+  const [groups, setGroups] = useState([]);
   // console.log(JSON.stringify(receipt, null, 1));
 
   useEffect(() => {
     getUserFriends();
+    getGroupChats();
   }, []);
 
   const getUserFriends = async () => {
@@ -32,9 +36,24 @@ const ChooseMembers = (props) => {
     }
   };
 
-  const openChatRoom = async (friend) => {
+  const getGroupChats = async () => {
     try {
-      let roomId = await getChatRoomIdForFriend(friend.userId);
+      const groupChats = await getGroupChatRoomsDocForUser();
+      setGroups(groupChats);
+    } catch (error) {
+      showError("Something went wrong: ".concat(error.message));
+      console.log("ERRORS", error);
+    }
+  };
+
+  const openChatRoom = async (data, type) => {
+    try {
+      let roomId;
+      if (type === "friend") {
+        roomId = await getChatRoomIdForFriend(data.userId);
+      } else {
+        roomId = data?.id;
+      }
       Alert.alert("Confirmation", "Add receipt to chat room?", [
         {
           text: "Cancel",
@@ -45,11 +64,19 @@ const ChooseMembers = (props) => {
           onPress: async () => {
             const response = await addReceiptToChatRoom(roomId, receipt);
             if (response?.success) {
-              navigation.navigate("ChatRoom", {
-                roomId,
-                friend,
-                navigatedFrom: 'receiptStack'
-              });
+              if (type === "friend") {
+                navigation.navigate("ChatRoom", {
+                  roomId,
+                  friend: data,
+                  navigatedFrom: "receiptStack",
+                });
+              } else {
+                navigation.navigate("ChatRoom", {
+                  roomId,
+                  group: data,
+                  navigatedFrom: "receiptStack",
+                });
+              }
               showSuccess(response.message);
             }
           },
@@ -63,13 +90,24 @@ const ChooseMembers = (props) => {
     <SafeAreaView style={styles.mainContainer}>
       <GeneralHeader header={"Choose participants"} />
       <ScrollView style={styles.container}>
+        <HeadingText heading={"Groups"} headingIndex={1.8} />
+        {groups.map((group, index) => {
+          return (
+            <ContactViewCard
+              key={index}
+              data={group}
+              onPress={() => openChatRoom(group, "group")}
+            />
+          );
+        })}
+        <HeadingText heading={"Friends"} headingIndex={1.8} />
         {friends.map((friend, index) => {
           return (
             <ContactViewCard
               key={index}
               data={friend}
               isFriendCard
-              onPress={() => openChatRoom(friend)}
+              onPress={() => openChatRoom(friend, "friend")}
             />
           );
         })}

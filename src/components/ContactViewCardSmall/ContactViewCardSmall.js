@@ -1,14 +1,20 @@
 import { View, Text, Image, TouchableOpacity } from "react-native";
-import React from "react";
-import styles from "./Styles";
+import React, { useState } from "react";
 import Images from "../../../assets/images";
 import { moderateScale } from "react-native-size-matters";
-import { AppColors, formateDate } from "../../utils/Global";
+import { AppColors } from "../../utils/Global";
 import { AppIcons } from "../../libs";
+import styles from "./Styles";
+import Checkbox from "expo-checkbox";
 
-const ContactViewCard = ({ data, isFriendCard, onPress }) => {
+const ContactViewCardSmall = ({ data, isFriendCard, onPress, isSelected }) => {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
+      <Checkbox
+        style={{ alignSelf: "center", marginHorizontal: moderateScale(5) }}
+        value={isSelected}
+        onValueChange={onPress}
+      />
       <View style={styles.iconCtn}>
         {data?.groupIcon ? (
           <Image
@@ -25,7 +31,7 @@ const ContactViewCard = ({ data, isFriendCard, onPress }) => {
           />
         ) : (
           <AppIcons.GroupDummyIcon
-            size={moderateScale(30)}
+            size={moderateScale(20)}
             color={AppColors.White}
             style={styles.dummyIconBG}
             disabled
@@ -35,22 +41,11 @@ const ContactViewCard = ({ data, isFriendCard, onPress }) => {
       <View style={styles.contentCtn}>
         <Text style={styles.heading}>{data?.name || data?.userName}</Text>
         {!isFriendCard && (
-          <Text style={styles.desc}>Members: {data?.users?.length}</Text>
+          <Text style={styles.desc}>Members: {data?.members}</Text>
         )}
-        <Text style={styles.dues}>
-          Dues Status: {data?.dues > 0 ? "Pending" : "Cleared"}
-        </Text>
-        <Text style={styles.dues}>
-          Last update:{" "}
-          {data?.chatData?.updatedAt
-            ? formateDate(data?.chatData?.updatedAt, "withTime")
-            : data?.updatedAt
-            ? formateDate(data?.updatedAt, "withTime")
-            : "Never"}
-        </Text>
       </View>
     </TouchableOpacity>
   );
 };
 
-export default ContactViewCard;
+export default ContactViewCardSmall;

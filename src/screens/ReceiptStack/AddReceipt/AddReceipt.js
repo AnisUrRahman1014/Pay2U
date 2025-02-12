@@ -7,8 +7,9 @@ import {
   NativeModules,
   ScrollView,
   FlatList,
+  Alert,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import styles from "./Styles";
 import * as ImagePicker from "expo-image-picker";
 import { AppIcons } from "../../../libs";
@@ -23,9 +24,13 @@ import * as Yup from "yup";
 import { moderateScale } from "react-native-size-matters";
 import { showError } from "../../../utils/MessageHandlers";
 import { CommonActions } from "@react-navigation/native";
+import ExtractedItemsForm from "../../../components/ActionSheets/ExtractedItemsForm/ExtractedItemsForm";
 
 const AddReceipt = (props) => {
   const { navigation } = props;
+
+  const extractedItemsRef = useRef();
+
   const [image, setImage] = useState(null);
   const [text, setText] = useState([]);
   const [items, setItems] = useState([]);
@@ -74,11 +79,12 @@ const AddReceipt = (props) => {
       const rawText = result.text;
       const lines = rawText.split("\n").filter((line) => line.trim() !== "");
       // Process lines to create row objects
-      const rows = processLinesIntoItems(lines);
-
+      // const rows = processLinesIntoItems(lines);
+      
       // Log the rows for debugging
-      console.log("Rows:", JSON.stringify(rows, null, 1));
+      // console.log("Rows:", JSON.stringify(rows, null, 1));
       setText(lines);
+      extractedItemsRef.current.show();
     } catch (error) {
       console.error("Error extracting text:", error);
     }
@@ -222,7 +228,6 @@ const AddReceipt = (props) => {
     navigation.navigate("ConfirmReceipt", {
       items,
     });
-    
   };
 
   const confirmExit = () => {
@@ -239,7 +244,7 @@ const AddReceipt = (props) => {
 
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <GeneralHeader header={"Add New Receipt"} leftIconOnPress={confirmExit}/>
+      <GeneralHeader header={"Add New Receipt"} leftIconOnPress={confirmExit} />
       <Formik
         initialValues={{
           name: "",
@@ -336,6 +341,7 @@ const AddReceipt = (props) => {
         label={"Confirm Receipt"}
         onPress={confirmReciept}
       />
+      <ExtractedItemsForm formRef={extractedItemsRef} extractedData={text}/>
     </SafeAreaView>
   );
 };

@@ -76,6 +76,7 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
 
   const handleFinalize = async () => {
     try {
+      // const finalItems = checkedItems.length > 0 ? checkedItems : [];
       const response  = await finalizeItems(chatId, receiptData?.id, checkedItems);
       showSuccess(response.message);
 
@@ -168,7 +169,7 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
           />
         )}
 
-        {!isOrderFinalized && (
+        {(receiptData?.paidBy && !isOrderFinalized) && (
           <CustomButton label={"Finalize"} onPress={handleFinalize} />
         )}
 
