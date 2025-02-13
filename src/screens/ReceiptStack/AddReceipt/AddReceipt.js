@@ -70,6 +70,7 @@ const AddReceipt = (props) => {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      extractText(result.assets[0].uri)
     }
   };
 
@@ -80,9 +81,10 @@ const AddReceipt = (props) => {
       const lines = rawText.split("\n").filter((line) => line.trim() !== "");
       // Process lines to create row objects
       // const rows = processLinesIntoItems(lines);
-      
+
       // Log the rows for debugging
       // console.log("Rows:", JSON.stringify(rows, null, 1));
+      setText(lines);
       setText(lines);
       extractedItemsRef.current.show();
     } catch (error) {
@@ -264,6 +266,8 @@ const AddReceipt = (props) => {
                     value={values.name}
                     onChangeText={handleChange("name")}
                     containerStyle={styles.inputStyles(200)}
+                    inputStyle={styles.txt}
+
                   />
                   {errors?.name && touched?.name && (
                     <Text style={styles.errorTxt}>
@@ -279,6 +283,7 @@ const AddReceipt = (props) => {
                     onChangeText={handleChange("price")}
                     keyboardType="numeric"
                     containerStyle={styles.inputStyles(150)}
+                    inputStyle={styles.txt}
                   />
                   {errors?.price && touched?.price && (
                     <Text style={styles.errorTxt}>
@@ -341,7 +346,12 @@ const AddReceipt = (props) => {
         label={"Confirm Receipt"}
         onPress={confirmReciept}
       />
-      <ExtractedItemsForm formRef={extractedItemsRef} extractedData={text}/>
+      <ExtractedItemsForm
+        formRef={extractedItemsRef}
+        extractedData={text}
+        setItems={setItems}
+        items={items}
+      />
     </SafeAreaView>
   );
 };

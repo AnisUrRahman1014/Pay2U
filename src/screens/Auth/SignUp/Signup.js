@@ -117,7 +117,7 @@ const Signup = (props) => {
                   onChangeText={handleChange("Username")}
                   containerStyle={styles.inputStyles}
                 />
-                {errors?.Username && (
+                {errors?.Username && touched.Username && (
                   <Text style={styles.errorTxt}>
                     {errors?.Username || touched?.Username}
                   </Text>
@@ -129,7 +129,7 @@ const Signup = (props) => {
                   onChangeText={handleChange("Email")}
                   containerStyle={styles.inputStyles}
                 />
-                {errors?.Email && (
+                {errors?.Email && touched.Email && (
                   <Text style={styles.errorTxt}>
                     {errors?.Email || touched?.Email}
                   </Text>
@@ -141,7 +141,7 @@ const Signup = (props) => {
                   onChangeText={handleChange("Password")}
                   containerStyle={styles.inputStyles}
                 />
-                {errors?.Password && (
+                {errors?.Password  && touched.Password && (
                   <Text style={styles.errorTxt}>
                     {errors?.Password || touched?.Password}
                   </Text>
@@ -153,7 +153,7 @@ const Signup = (props) => {
                   onChangeText={handleChange("ConfirmPassword")}
                   containerStyle={styles.inputStyles}
                 />
-                {errors?.ConfirmPassword && (
+                {errors?.ConfirmPassword && touched.ConfirmPassword && (
                   <Text style={styles.errorTxt}>
                     {errors?.ConfirmPassword || touched?.ConfirmPassword}
                   </Text>

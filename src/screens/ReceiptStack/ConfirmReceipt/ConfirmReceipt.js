@@ -15,7 +15,7 @@ import CustomButton from "../../../components/CustomButton/CustomButton";
 import { moderateScale } from "react-native-size-matters";
 import { Theme } from "../../../libs";
 import { showError } from "../../../utils/MessageHandlers";
-import { useNavigation } from "@react-navigation/native";
+import { CommonActions, useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 
 const ConfirmReceipt = (props) => {
@@ -52,7 +52,7 @@ const ConfirmReceipt = (props) => {
           orderedItems,
         },
       ],
-      paidBy: isPaidFirst ? userId : null
+      paidBy: isPaidFirst ? userId : null,
     };
     navigation.navigate("ChooseMembers", {
       receipt
@@ -70,7 +70,7 @@ const ConfirmReceipt = (props) => {
         />
         <Text style={styles.itemText}>{item.itemName}</Text>
       </View>
-      <Text style={styles.itemText}>${item.price}</Text>
+      <Text style={styles.itemText}>$ {item.price}</Text>
     </View>
   );
 

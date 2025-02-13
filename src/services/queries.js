@@ -222,8 +222,7 @@ export const getActivitiesForUser = async () => {
     }
     const userData = documentRef.data();
     const activities = userData.activities || [];
-
-    const sortedActivities = activities.sort((a, b) => {
+    const sortedActivities = activities?.sort((a, b) => {
       const dateA = new Date(a.createdAt); // Convert to Date object
       const dateB = new Date(b.createdAt); // Convert to Date object
       return dateB - dateA; // Sort in descending order

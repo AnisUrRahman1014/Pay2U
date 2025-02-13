@@ -9,52 +9,19 @@ import { moderateScale } from "react-native-size-matters";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import ContactViewCard from "../../../components/ContactViewCard/ContactViewCard";
 import PieChart from "react-native-pie-chart";
-import { showError } from "../../../utils/MessageHandlers";
-import { getCurrentUserFromDB, getRecentFriendsChatRoomDocForUser, getRecentGroupChats } from "../../../services/queries";
+import { showError, showSuccess } from "../../../utils/MessageHandlers";
+import {
+  getChatRoomIdForFriend,
+  getCurrentUserFromDB,
+  getRecentFriendsChatRoomDocForUser,
+  getRecentGroupChats,
+} from "../../../services/queries";
 
 const Home = () => {
   const navigation = useNavigation();
   const [user, setUser] = useState(null);
-  const [groups, setGroups] = useState([
-    {
-      name: "Apple",
-      members: 5,
-      updatedAt: new Date().toISOString(),
-      dues: "Cleared",
-    },
-    {
-      name: "Banana",
-      members: 8,
-      updatedAt: new Date().toISOString(),
-      dues: "Pending",
-    },
-    {
-      name: "Cherry",
-      members: 12,
-      updatedAt: new Date().toISOString(),
-      dues: "Cleared",
-    },
-  ]);
-  const [friends, setFriends] = useState([
-    {
-      name: "Honeydew",
-      members: 6,
-      updatedAt: new Date().toISOString(),
-      dues: "Pending",
-    },
-    {
-      name: "Kiwi",
-      members: 4,
-      updatedAt: new Date().toISOString(),
-      dues: "Cleared",
-    },
-    {
-      name: "Lemon",
-      members: 10,
-      updatedAt: new Date().toISOString(),
-      dues: "Pending",
-    },
-  ]);
+  const [groups, setGroups] = useState([]);
+  const [friends, setFriends] = useState([]);
 
   useFocusEffect(
     useCallback(() => {
@@ -73,23 +40,23 @@ const Home = () => {
     }
   };
 
-  const getRecentGroups = async()=>{
-    try{
+  const getRecentGroups = async () => {
+    try {
       const chats = await getRecentGroupChats();
-      setGroups(chats)
-    }catch(error){
-      showError('Failed to get recent groups. '.concat(error.message))
+      setGroups(chats);
+    } catch (error) {
+      showError("Failed to get recent groups. ".concat(error.message));
     }
-  }
+  };
 
-  const getRecentFriends = async()=>{
-    try{
+  const getRecentFriends = async () => {
+    try {
       const friendss = await getRecentFriendsChatRoomDocForUser();
-      setFriends(friendss)
-    }catch(error){
-      showError('Failed to get recent friends. '.concat(error.message))
+      setFriends(friendss);
+    } catch (error) {
+      showError("Failed to get recent friends. ".concat(error.message));
     }
-  }
+  };
 
   const series = [
     {
@@ -117,6 +84,33 @@ const Home = () => {
       color: "#ff9100",
     },
   ];
+
+  const openChatRoom = async (data, type) => {
+    try {
+      let roomId;
+      if (type === "friend") {
+        roomId = await getChatRoomIdForFriend(data.userId);
+      } else {
+        roomId = data?.id;
+      }
+      if (type === "friend") {
+        navigation.navigate("ChatRoom", {
+          roomId,
+          friend: data,
+          navigatedFrom: "receiptStack",
+        });
+      } else {
+        navigation.navigate("ChatRoom", {
+          roomId,
+          group: data,
+          navigatedFrom: "receiptStack",
+        });
+      }
+    } catch (error) {
+      showError("Error accessing chat room: ".concat(error.message));
+    }
+  };
+
   return (
     <SafeAreaView style={styles.mainContainer}>
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
@@ -129,9 +123,9 @@ const Home = () => {
             />
           </View>
           <View style={styles.rightCtn}>
-            <Text style={styles.balance}>$ {user?.balance || '---'}</Text>
-            <Text style={styles.debit}>$ {user?.debit || '---'}</Text>
-            <Text style={styles.credit}>$ {user?.credit || '---'}</Text>
+            <Text style={styles.balance}>$ {user?.balance || "---"}</Text>
+            <Text style={styles.debit}>$ {user?.debit || "---"}</Text>
+            <Text style={styles.credit}>$ {user?.credit || "---"}</Text>
           </View>
         </View>
 
@@ -143,7 +137,7 @@ const Home = () => {
         />
         <View style={styles.container}>
           {groups.map((group, index) => {
-            return <ContactViewCard key={index} data={group} />;
+            return <ContactViewCard key={index} data={group} onPress={() => openChatRoom(group, "group")}/>;
           })}
         </View>
 
@@ -154,8 +148,15 @@ const Home = () => {
           onPressViewAll={() => navigation.navigate("FriendsStack")}
         />
         <View style={styles.container}>
-          {friends.map((group, index) => {
-            return <ContactViewCard key={index} data={group} isFriendCard />;
+          {friends.map((friend, index) => {
+            return (
+              <ContactViewCard
+                key={index}
+                data={friend}
+                isFriendCard
+                onPress={() => openChatRoom(friend, "friend")}
+              />
+            );
           })}
         </View>
       </ScrollView>

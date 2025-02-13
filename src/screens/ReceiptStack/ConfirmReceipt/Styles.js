@@ -22,6 +22,7 @@ const styles = StyleSheet.create({
     fontFamily: "Lato-Regular",
     marginLeft: moderateScale(10),
     fontSize: moderateScale(16),
+    lineHeight: moderateScale(18)
   },
   confirmButton: {
     bottom: 0,

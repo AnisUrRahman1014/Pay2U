@@ -388,6 +388,7 @@ export const payMyShare = async (chatId, receiptId) => {
     }
 
     currentUserActivities.push(currentUserNewActivity);
+    paidByUserActivities.push(paidByUserNewActivity)
 
     // Update the current user's record in userItems
     const updatedUserItems = [...userItems];
@@ -414,7 +415,7 @@ export const payMyShare = async (chatId, receiptId) => {
       paidByUserDocRef.update({
         balance: newBalance,
         debit: newDebit,
-        activities: paidByUserNewActivity
+        activities: paidByUserActivities
       }),
 
       // Update the current user's credit

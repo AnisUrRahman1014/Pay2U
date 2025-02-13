@@ -15,6 +15,8 @@ const ChatRoom = (props) => {
   const [receipts, setReceipts] = useState([]); // State for receipts (if needed)
   const [totalMembers, setTotalMembers] = useState(0);
 
+  const flatListRef = React.useRef(null);
+
   useEffect(() => {
     // Set up a real-time listener for the chat room document
     const unsubscribe = firestore()
@@ -35,24 +37,26 @@ const ChatRoom = (props) => {
           showError("Error listening to chat room: ".concat(error.message));
         }
       );
-
     // Clean up the listener when the component unmounts
     return () => unsubscribe();
   }, [roomId]);
 
+  useEffect(() => {
+    flatListRef.current?.scrollToEnd({ animated: true });
+  }, [receipts]);
   return (
     <SafeAreaView style={styles.rootContainer}>
       <ChatRoomHeader
         title={friend?.userName || group?.name}
-        leftIconOnPress={
-          navigatedFrom === "receiptStack"
-            ? () => navigation.navigate("BottomTabsNav")
-            : undefined
-        }
+        leftIconOnPress={() => {
+          navigation.goBack();
+        }}
       />
       {receipts?.length > 0 ? (
         <FlatList
+          ref={flatListRef}
           data={receipts}
+          keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) => {
             return (
               <ReceiptCard
@@ -63,10 +67,18 @@ const ChatRoom = (props) => {
               />
             );
           }}
+          // onContentSizeChange={() => {
+          //   // Scroll to the bottom whenever the content size changes
+          //   flatListRef.current?.scrollToEnd({ animated: true });
+          // }}
+          // onLayout={() => {
+          //   // Scroll to the bottom whenever the layout changes
+          //   flatListRef.current?.scrollToEnd({ animated: true });
+          // }}
         />
       ) : (
         <View style={styles.noReceiptCtn}>
-        <AppIcons.Nothing size={moderateScale(150)}/>
+          <AppIcons.Nothing size={moderateScale(150)} />
           <Text style={styles.noReceiptTxt}>No receipts available yet</Text>
         </View>
       )}

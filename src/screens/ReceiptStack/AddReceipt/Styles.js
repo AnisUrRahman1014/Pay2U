@@ -4,6 +4,7 @@ import {
   moderateScale,
   moderateVerticalScale,
 } from "react-native-size-matters";
+import { Theme } from "../../../libs";
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -61,7 +62,7 @@ const styles = StyleSheet.create({
     right: -20,
   },
   itemListCtn: {
-    backgroundColor: AppColors.iconColor,
+    backgroundColor: Theme.colors.MidGrey5,
     paddingHorizontal: moderateScale(10),
     paddingVertical: moderateScale(5),
     flexDirection: "row",
@@ -88,6 +89,10 @@ const styles = StyleSheet.create({
     gap: moderateScale(5),
     alignItems: "top",
     justifyContent: "center",
+  },
+  txt:{
+    fontFamily: 'Lato-Regular',
+    fontSize: moderateScale(16),
   }
 });
 

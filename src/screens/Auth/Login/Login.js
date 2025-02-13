@@ -1,5 +1,5 @@
 import { View, Text, Image, TouchableOpacity, Platform } from "react-native";
-import React from "react";
+import React, { useRef } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Images from "../../../../assets/images";
 import styles from "./Styles";
@@ -15,10 +15,14 @@ import auth, { updateProfile } from "@react-native-firebase/auth";
 import { showError } from "../../../utils/MessageHandlers";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import firestore from "@react-native-firebase/firestore";
+import ResetPasswordForm from "../../../components/ActionSheets/ResetPasswordForm/ResetPsswordForm";
 
 const Login = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
+
+  const resetPasswordRef = useRef();
+
   const validationSchema = Yup.object({
     Email: Yup.string().email("Invalid Email").required("Email is required"),
     Password: Yup.string()
@@ -40,26 +44,26 @@ const Login = () => {
       await GoogleSignin.hasPlayServices({
         showPlayServicesUpdateDialog: true,
       });
-  
+
       const userInfo = await GoogleSignin.signIn();
-  
+
       const { user, idToken } = userInfo?.data;
-  
+
       // Create a Firebase credential using the ID token
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-  
+
       // Sign in to Firebase with the credential
       const firebaseUserCredential = await auth().signInWithCredential(
         googleCredential
       );
-  
+
       if (firebaseUserCredential?.user) {
         const userId = firebaseUserCredential?.user?.uid;
         const userRef = firestore().collection("users").doc(userId);
-  
+
         // Check if the user already exists in Firestore
         const userDoc = await userRef.get();
-  
+
         if (!userDoc.exists) {
           // User does not exist, create a new document with initial data
           const userData = {
@@ -71,7 +75,7 @@ const Login = () => {
             friends: [],
             chatRoomIds: [],
           };
-  
+
           await userRef.set(userData);
         } else {
           // User exists, update only the necessary fields (if needed)
@@ -81,11 +85,11 @@ const Login = () => {
             userName: firebaseUserCredential.user.displayName,
             updatedAt: new Date().toISOString(), // Add an updatedAt field
           };
-  
+
           // Merge the updated data with the existing data
           await userRef.set(updatedData, { merge: true });
         }
-  
+
         // Dispatch the user data to Redux (if required)
         dispatch(setUser(firebaseUserCredential.user));
       }
@@ -156,7 +160,7 @@ const Login = () => {
                   onChangeText={handleChange("Email")}
                   containerStyle={styles.inputStyles}
                 />
-                {(errors?.Email && touched?.Email) && (
+                {errors?.Email && touched?.Email && (
                   <Text style={styles.errorTxt}>
                     {errors?.Email || touched?.Email}
                   </Text>
@@ -168,7 +172,7 @@ const Login = () => {
                   onChangeText={handleChange("Password")}
                   containerStyle={styles.inputStyles}
                 />
-                {(errors?.Password && touched?.Password) && (
+                {errors?.Password && touched?.Password && (
                   <Text style={styles.errorTxt}>
                     {errors?.Password || touched?.Password}
                   </Text>
@@ -177,7 +181,10 @@ const Login = () => {
                   <Text style={styles.btnTxt}>Login</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.forgotBtnCtn}>
+                <TouchableOpacity
+                  style={styles.forgotBtnCtn}
+                  onPress={() => resetPasswordRef.current.show()}
+                >
                   <Text style={styles.forgotBtn}>Forgot Password?</Text>
                 </TouchableOpacity>
               </View>
@@ -208,6 +215,7 @@ const Login = () => {
           <Text style={styles.signUpTxt}>Don't have an account? Sign up</Text>
         </TouchableOpacity>
       </View>
+      <ResetPasswordForm formRef={resetPasswordRef} />
     </SafeAreaView>
   );
 };

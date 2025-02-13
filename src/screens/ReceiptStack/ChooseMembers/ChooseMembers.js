@@ -65,17 +65,49 @@ const ChooseMembers = (props) => {
             const response = await addReceiptToChatRoom(roomId, receipt);
             if (response?.success) {
               if (type === "friend") {
-                navigation.navigate("ChatRoom", {
-                  roomId,
-                  friend: data,
-                  navigatedFrom: "receiptStack",
-                });
+                navigation.dispatch(
+                  CommonActions.reset({
+                    index: 1, // Set the index to 1 (ChooseMembers is the active screen, Home is below it)
+                    routes: [
+                      { name: "BottomTabsNav" },
+                      {
+                        name: "ChatRoom",
+                        params: {
+                          roomId,
+                          friend: data,
+                          navigatedFrom: "receiptStack",
+                        },
+                      },
+                    ],
+                  })
+                );
+                // navigation.navigate("ChatRoom", {
+                //   roomId,
+                //   friend: data,
+                //   navigatedFrom: "receiptStack",
+                // });
               } else {
-                navigation.navigate("ChatRoom", {
-                  roomId,
-                  group: data,
-                  navigatedFrom: "receiptStack",
-                });
+                navigation.dispatch(
+                  CommonActions.reset({
+                    index: 1, // Set the index to 1 (ChooseMembers is the active screen, Home is below it)
+                    routes: [
+                      { name: "BottomTabsNav" },
+                      {
+                        name: "ChatRoom",
+                        params: {
+                          roomId,
+                          group: data,
+                          navigatedFrom: "receiptStack",
+                        },
+                      },
+                    ],
+                  })
+                );
+                // navigation.navigate("ChatRoom", {
+                //   roomId,
+                //   group: data,
+                //   navigatedFrom: "receiptStack",
+                // });
               }
               showSuccess(response.message);
             }
@@ -86,6 +118,7 @@ const ChooseMembers = (props) => {
       showError("Error accessing chat room: ".concat(error.message));
     }
   };
+
   return (
     <SafeAreaView style={styles.mainContainer}>
       <GeneralHeader header={"Choose participants"} />

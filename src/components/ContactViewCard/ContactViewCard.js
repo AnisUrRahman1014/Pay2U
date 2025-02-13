@@ -23,6 +23,13 @@ const ContactViewCard = ({ data, isFriendCard, onPress }) => {
             }}
             resizeMode="contain"
           />
+        ) : isFriendCard ? (
+          <AppIcons.UserIcon
+            size={moderateScale(30)}
+            color={AppColors.White}
+            style={styles.dummyIconBG}
+            disabled
+          />
         ) : (
           <AppIcons.GroupDummyIcon
             size={moderateScale(30)}

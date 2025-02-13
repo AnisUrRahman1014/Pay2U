@@ -7,15 +7,27 @@ import { AppIcons } from "../../../libs";
 import { moderateScale } from "react-native-size-matters";
 import { AppColors } from "../../../utils/Global";
 import CustomButton from "../../CustomButton/CustomButton";
+import ItemModificationField from "../../ItemModificationField/ItemModificationField";
+import { showError } from "../../../utils/MessageHandlers";
 
-const ExtractedItemsForm = ({ formRef, extractedData }) => {
+const ExtractedItemsForm = ({ formRef, extractedData, setItems, items }) => {
   const [extractedItems, setExtractedItems] = useState(extractedData);
   const [chosenItems, setChosenItems] = useState([]);
 
   // Add an item to the chosenItems list
   const moveToChosen = (item) => {
-    if (!chosenItems.includes(item)) {
-      setChosenItems([...chosenItems, item]);
+    let alreadyExists = false;
+    chosenItems.forEach((chosenItem) => {
+      if (!chosenItem.itemName == item) {
+        alreadyExists = true;
+      }
+    });
+    if (!alreadyExists) {
+      const itemObj = {
+        itemName: item,
+        price: null,
+      };
+      setChosenItems([...chosenItems, itemObj]);
       setExtractedItems(
         extractedItems.filter((chosenItem) => chosenItem !== item)
       );
@@ -24,7 +36,9 @@ const ExtractedItemsForm = ({ formRef, extractedData }) => {
 
   // Remove an item from the chosenItems list
   const removeFromChosen = (item) => {
-    setChosenItems(chosenItems.filter((chosenItem) => chosenItem !== item));
+    setChosenItems(
+      chosenItems.filter((chosenItem) => chosenItem.itemName !== item)
+    );
     setExtractedItems([...extractedItems, item]);
   };
 
@@ -35,25 +49,54 @@ const ExtractedItemsForm = ({ formRef, extractedData }) => {
     formRef.current?.hide(); // Hide the ActionSheet
   };
 
+  const handleItemUpdate = (index, updatedItem) => {
+    const updatedChosenItems = [...chosenItems];
+    updatedChosenItems[index] = updatedItem; // Update the specific item
+    setChosenItems(updatedChosenItems); // Update the parent state
+  };
+
+  const handleSubmit = () => {
+    // Filter out invalid items
+    const validItems = chosenItems.filter(
+      (item) => item?.price && item?.price !== "" && item?.itemName !== ""
+    );
+
+    if(chosenItems.length !== validItems.length){
+      showError('Please complete all fields');
+      return;
+    }
+
+    // Filter out duplicate items
+    const nonDuplicateItems = validItems.filter(
+      (item) =>
+        !items.some((existingItem) => existingItem.itemName === item.itemName)
+    );
+
+    // Add valid and non-duplicate items to the items list
+    if (nonDuplicateItems.length > 0) {
+      setItems((prevItems) => [...prevItems, ...nonDuplicateItems]);
+      setChosenItems([]); // Clear chosenItems
+      formRef.current?.hide(); // Hide the ActionSheet
+    }
+  };
+
   return (
     <ActionSheet ref={formRef} containerStyle={styles.containerStyle}>
       <View style={styles.btnsCtn}>
-        <CustomButton label={"Done"} containerStyles={styles.btn} focusBtn />
-        <AppIcons.CrossIcon
-          size={moderateScale(30)}
-          onPress={handleDiscard}
+        <CustomButton
+          label={"Done"}
+          containerStyles={styles.btn}
+          focusBtn
+          onPress={handleSubmit}
         />
+        <AppIcons.CrossIcon size={moderateScale(30)} onPress={handleDiscard} />
       </View>
       <HeadingText
         heading={"Choose the items you want to add"}
         headingIndex={2.5}
       />
 
-      <ScrollView>
-        <View style={styles.itemsContainer}>
-          {chosenItems.map((item, index) => {
-            return (
-              <TouchableOpacity
+      {/* <TouchableOpacity
                 style={styles.chosenItem}
                 onPress={() => moveToChosen(item)}
                 key={index}
@@ -66,7 +109,17 @@ const ExtractedItemsForm = ({ formRef, extractedData }) => {
                 <Text style={[styles.text, { color: AppColors.White }]}>
                   {item}
                 </Text>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
+      <ScrollView>
+        <View style={styles.itemsContainer}>
+          {chosenItems.map((item, index) => {
+            return (
+              <ItemModificationField
+                item={item}
+                key={index}
+                onUpdate={(updatedItem) => handleItemUpdate(index, updatedItem)}
+                removeFromChosen={removeFromChosen}
+              />
             );
           })}
         </View>
