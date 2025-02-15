@@ -161,7 +161,7 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
             );
           }}
         />
-        {myShare && (
+        {myShare > -1 && (
           <TextWrapper
             title={"Your share:"}
             desc={`$ ${myShare}`}
