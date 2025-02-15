@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     alignSelf: "center",
+    borderRadius: moderateScale(200)
   },
   receiptCtn: {
     flex: 1,

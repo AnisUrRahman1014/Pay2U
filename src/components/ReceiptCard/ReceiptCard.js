@@ -24,7 +24,7 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
   const [isOrderFinalized, setIsOrderFinalized] = useState(false);
   const [receiptFinalized, setReceiptFinalized] = useState(false);
   const [hadPaidFirst, setHadPaidFirst] = useState(false);
-  const [myShare, setMyShare] = useState(null);
+  const [myShare, setMyShare] = useState(undefined);
   const [duesPaid, setDuesPaid] = useState(false);
 
   console.log(JSON.stringify(receiptData, null, 1));
@@ -122,9 +122,9 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
       <View style={styles.dpFlex}>
         <View style={styles.dpContainer}>
           <Image
-            source={Images.GoogleIcon}
-            resizeMode="contain"
+            source={createdBy?.profilePic ? {uri: createdBy?.profilePic} : Images.ReceiptImage}
             style={styles.dp}
+            resizeMode="contain"
           />
         </View>
       </View>

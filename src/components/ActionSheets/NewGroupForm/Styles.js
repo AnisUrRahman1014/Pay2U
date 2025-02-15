@@ -1,5 +1,6 @@
 import { StyleSheet } from "react-native";
 import { moderateScale } from "react-native-size-matters";
+import { AppColors } from "../../../utils/Global";
 
 const styles = StyleSheet.create({
   containerStyle: {
@@ -25,6 +26,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: moderateScale(10),
     top: 5,
   },
+  image:{
+    backgroundColor: AppColors.iconColor,
+    width: moderateScale(100),
+    aspectRatio: 1,
+    borderRadius: moderateScale(200),
+    marginVertical: moderateScale(10)
+  }
 });
 
 export default styles;

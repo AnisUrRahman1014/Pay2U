@@ -13,6 +13,12 @@ const styles = StyleSheet.create({
     width: "90%",
     alignSelf: "center",
   },
+  simpleBtn: {
+    position: "absolute",
+    bottom: 50,
+    width: "90%",
+    alignSelf: "center",
+  },
   container: {
     flex: 1,
     padding: moderateScale(10),
@@ -25,6 +31,11 @@ const styles = StyleSheet.create({
     borderRadius: moderateScale(200),
     alignItems: "center",
     justifyContent: "center",
+  },
+  dp:{
+    width: '100%',
+    height: '100%',
+    borderRadius: moderateScale(200)
   },
   fieldsCtn: {
     alignSelf: "center",

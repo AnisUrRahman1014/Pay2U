@@ -16,9 +16,9 @@ const ContactViewCardSmall = ({ data, isFriendCard, onPress, isSelected }) => {
         onValueChange={onPress}
       />
       <View style={styles.iconCtn}>
-      {data?.groupIcon ? (
+        {data?.groupIcon ? (
           <Image
-            source={Images.Pay2ULogo}
+            source={{ uri: data?.groupIcon }}
             style={{
               width: "80%",
               height: "80%",
@@ -30,12 +30,27 @@ const ContactViewCardSmall = ({ data, isFriendCard, onPress, isSelected }) => {
             resizeMode="contain"
           />
         ) : isFriendCard ? (
-          <AppIcons.UserIcon
-            size={moderateScale(20)}
-            color={AppColors.White}
-            style={styles.dummyIconBG}
-            disabled
-          />
+          data?.profilePic ? (
+            <Image
+              source={{ uri: data?.profilePic }}
+              style={{
+                width: "80%",
+                height: "80%",
+                borderRadius: moderateScale(200),
+                backgroundColor: AppColors.White,
+                borderWidth: 1,
+                borderColor: AppColors.Primary,
+              }}
+              resizeMode="contain"
+            />
+          ) : (
+            <AppIcons.UserIcon
+              size={moderateScale(20)}
+              color={AppColors.White}
+              style={styles.dummyIconBG}
+              disabled
+            />
+          )
         ) : (
           <AppIcons.GroupDummyIcon
             size={moderateScale(20)}

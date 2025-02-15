@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from "react-native";
+import { View, Text, ScrollView, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import ActionSheet from "react-native-actions-sheet";
 import styles from "./Styles";
@@ -13,15 +13,50 @@ import NativeInput from "../../NativeInput/NativeInput";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { createNewGroup } from "../../../services/mutations";
+import * as ImagePicker from "expo-image-picker";
+import { AppColors } from "../../../utils/Global";
 
 const NewGroupForm = ({ formRef }) => {
   const [friends, setFriends] = useState([]);
   const [chosenFriends, setChosenFriends] = useState([]);
+  const [image, setImage] = useState(null);
 
   // Get user's friends
   useEffect(() => {
     getUserFriends();
   }, []);
+
+  const choosePicture = async () => {
+    try {
+      const { status } =
+        await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+      if (status !== "granted") {
+        showError("Sorry, we need camera roll permissions to make this work!");
+        return;
+      }
+
+      // Launch the image picker
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: "images",
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0,
+      });
+
+      if (!result.canceled) {
+        // Handle the selected image
+        const selectedImage = result.assets[0].uri;
+        setImage(selectedImage);
+        // You can now use the selectedImage URI to update the profile picture
+      } else {
+        console.log("User cancelled image picker");
+      }
+    } catch (error) {
+      console.log(error);
+      showError(error.message);
+    }
+  };
 
   const getUserFriends = async () => {
     try {
@@ -54,7 +89,7 @@ const NewGroupForm = ({ formRef }) => {
         showError("Please select at least one friend.");
         return;
       }
-      const response = await createNewGroup(values.groupName, chosenFriends);
+      const response = await createNewGroup(values.groupName, chosenFriends, image);
       if (response.success) {
         showSuccess(`New group ${values.groupName} was created`);
       }
@@ -100,6 +135,20 @@ const NewGroupForm = ({ formRef }) => {
                   onPress={handleDiscard}
                 />
               </View>
+              {!image ? (
+                <AppIcons.UserIcon
+                  size={moderateScale(40)}
+                  color={AppColors.White}
+                  onPress={choosePicture}
+                  style={styles.image}
+                />
+              ) : (
+                <Image
+                  source={{ uri: image }}
+                  style={styles.image}
+                  resizeMode="contain"
+                />
+              )}
               <NativeInput
                 withOutIcon
                 label={"Group Name"}

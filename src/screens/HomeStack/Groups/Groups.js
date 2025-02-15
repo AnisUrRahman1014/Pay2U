@@ -25,7 +25,10 @@ const Groups = () => {
   const getGroupChats = async () => {
     try {
       const chats = await getGroupChatRoomsDocForUser();
-      setGroups(chats);
+      const sorted = chats.sort((a,b) => {
+        return new Date(b.updatedAt) - new Date(a.updatedAt)
+      })
+      setGroups(sorted);
     } catch (error) {
       showError("Error getting group chats ".concat(error.message));
     }

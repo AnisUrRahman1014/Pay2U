@@ -47,7 +47,7 @@ export const addReceiptToChatRoom = async (roomId, receipt) => {
     // Step 7: Update the chat room document with the new receipts array
     await firestore().collection(FirebaseContants.chats).doc(roomId).update({
       receipts: receipts,
-      updatedAt: new Date().toISOString()
+      updatedAt: new Date().toISOString(),
     });
 
     console.log("Receipt added successfully to chat room:", roomId);
@@ -356,8 +356,6 @@ export const payMyShare = async (chatId, receiptId) => {
     const newBalance = paidUserBalance + currentUserShare;
     const newDebit = paidUserDebit - currentUserShare;
 
-    
-
     // Get the current user's document
     const currentUserDocRef = firestore()
       .collection(FirebaseContants.users)
@@ -378,17 +376,17 @@ export const payMyShare = async (chatId, receiptId) => {
     const currentUserNewActivity = {
       createdAt: new Date().toISOString(),
       message: `You paid $ ${currentUserShare} to ${paidByUser?.userName}`,
-      type: 'sent'
-    }
+      type: "sent",
+    };
 
     const paidByUserNewActivity = {
       createdAt: new Date().toISOString(),
       message: `${currentUserData?.userName} paid $ ${currentUserShare} to you.`,
-      type: 'received'
-    }
+      type: "received",
+    };
 
     currentUserActivities.push(currentUserNewActivity);
-    paidByUserActivities.push(paidByUserNewActivity)
+    paidByUserActivities.push(paidByUserNewActivity);
 
     // Update the current user's record in userItems
     const updatedUserItems = [...userItems];
@@ -415,13 +413,13 @@ export const payMyShare = async (chatId, receiptId) => {
       paidByUserDocRef.update({
         balance: newBalance,
         debit: newDebit,
-        activities: paidByUserActivities
+        activities: paidByUserActivities,
       }),
 
       // Update the current user's credit
       currentUserDocRef.update({
         credit: newCredit,
-        activities: currentUserActivities
+        activities: currentUserActivities,
       }),
 
       // Update the chat room's receipts array
@@ -438,7 +436,7 @@ export const payMyShare = async (chatId, receiptId) => {
   }
 };
 
-export const createNewGroup = async (groupName, chosenFriends) => {
+export const createNewGroup = async (groupName, chosenFriends, groupIcon) => {
   try {
     const userId = auth().currentUser.uid;
 
@@ -452,6 +450,7 @@ export const createNewGroup = async (groupName, chosenFriends) => {
     // Step 3: Create the chat room document
     await chatDocRef.set({
       id: chatRoomId,
+      groupIcon: groupIcon,
       name: groupName, // Add the group name
       users: users, // Add all user IDs
       type: "group", // Specify the type as "group"
@@ -474,7 +473,7 @@ export const createNewGroup = async (groupName, chosenFriends) => {
       }
 
       const userData = userDoc.data();
-      const chatRoomIds = userData.chatRoomIds || [];  // Use chatRoomIds instead of groupChatIds
+      const chatRoomIds = userData.chatRoomIds || []; // Use chatRoomIds instead of groupChatIds
 
       // Add the new chat room ID to the chatRoomIds array
       if (!chatRoomIds.includes(chatRoomId)) {
@@ -494,5 +493,57 @@ export const createNewGroup = async (groupName, chosenFriends) => {
   } catch (error) {
     console.error("Error creating group:", error);
     throw Error(error);
+  }
+};
+
+export const updateProfile = async (username, profilePic) => {
+  try {
+    const user = auth().currentUser;
+
+    if (!user) {
+      throw Error("No user is currently signed in.");
+    }
+
+    const userId = user.uid;
+
+    // Update Firebase Authentication profile
+    const updates = {};
+    if (username) {
+      updates.displayName = username;
+    }
+    if (profilePic) {
+      updates.photoURL = profilePic;
+    }
+
+    await user.updateProfile(updates);
+
+    // Update Firestore profile
+    const userDocRef = firestore()
+      .collection(FirebaseContants.users)
+      .doc(userId);
+    const userDoc = await userDocRef.get();
+
+    if (!userDoc.exists) {
+      throw Error("User document does not exist in Firestore.");
+    }
+
+    const userData = userDoc.data();
+    const oldPic = userData?.profilePic || "";
+    const oldUsername = userData?.userName || "";
+
+    await userDocRef.update({
+      userName: username || oldUsername,
+      profilePic: profilePic || oldPic,
+      updatedAt: new Date().toISOString(), // Add an updatedAt field
+    });
+
+    return {
+      success: true, 
+      user: user
+    }
+
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    throw Error(error.message || "Failed to update profile");
   }
 };
