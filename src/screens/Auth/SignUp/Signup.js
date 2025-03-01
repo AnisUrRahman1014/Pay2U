@@ -12,7 +12,7 @@ import { AppIcons } from "../../../libs";
 import { AppColors } from "../../../utils/Global";
 import auth, { updateProfile } from "@react-native-firebase/auth";
 import firestore from "@react-native-firebase/firestore";
-import { showSuccess } from "../../../utils/MessageHandlers";
+import { showError, showSuccess } from "../../../utils/MessageHandlers";
 
 const Signup = (props) => {
   const { navigation } = props;

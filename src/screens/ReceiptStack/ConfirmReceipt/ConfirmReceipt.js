@@ -17,6 +17,7 @@ import { Theme } from "../../../libs";
 import { showError } from "../../../utils/MessageHandlers";
 import { CommonActions, useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
+import NativeInput from "../../../components/NativeInput/NativeInput";
 
 const ConfirmReceipt = (props) => {
   const { items } = props?.route?.params;
@@ -29,6 +30,7 @@ const ConfirmReceipt = (props) => {
   // State to track selected items
   const [selectedItems, setSelectedItems] = useState({});
   const [isPaidFirst, setIsPaidFirst] = useState(false);
+  const [gst, setGST] = useState("");
 
   const toggleIsPaid = () => {
     setIsPaidFirst((prev) => !prev);
@@ -53,9 +55,10 @@ const ConfirmReceipt = (props) => {
         },
       ],
       paidBy: isPaidFirst ? userId : null,
+      gst: gst,
     };
     navigation.navigate("ChooseMembers", {
-      receipt
+      receipt,
     });
   };
 
@@ -88,6 +91,18 @@ const ConfirmReceipt = (props) => {
           renderItem={renderItem}
           keyExtractor={(item) => item.itemName}
         />
+
+        <View>
+          <NativeInput
+            withOutIcon
+            placeholder="GST %"
+            value={gst}
+            onChangeText={(text) => setGST(text)}
+            containerStyle={styles.inputStyles(100)}
+            inputStyle={styles.txt}
+            keyboardType="numeric"
+          />
+        </View>
 
         <View style={[styles.row, { paddingHorizontal: moderateScale(20) }]}>
           <Checkbox

@@ -76,6 +76,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: moderateScale(26, 0.3),
   },
+  emptyTxt: {
+    fontFamily: 'Lato-Bold',
+    fontSize: moderateScale(16, 0.3),
+    color: AppColors.error
+  }
 });
 
 export default styles;

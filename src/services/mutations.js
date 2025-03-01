@@ -33,15 +33,22 @@ export const addReceiptToChatRoom = async (roomId, receipt) => {
 
     const receiptId = uuidv4();
 
+    const subtotal = receipt.items.reduce((sum, item) => {
+      return sum + Number(item.price);
+    }, 0);
+
+    const taxAmount = (subtotal * receipt.gst) / 100; // Calculate GST amount
+    const totalBill = subtotal + taxAmount; // Calculate total bill including GST
+
     // Step 6: Add the new receipt to the receipts array
     receipts.push({
       ...receipt,
       createdAt: new Date().toISOString(),
       createdby: userId,
       id: receiptId,
-      totalBill: receipt.items.reduce((sum, item) => {
-        return sum + Number(item.price);
-      }, 0),
+      subtotal, // Add subtotal (optional)
+      taxAmount, // Add tax amount
+      totalBill, // Add total bill including GST
     });
 
     // Step 7: Update the chat room document with the new receipts array
@@ -212,6 +219,7 @@ export const finalizeItems = async (chatId, receiptId, orderedItems) => {
             myShare += parseFloat(item.price) / usersWhoOrderedItem;
           }
         });
+        myShare += updatedReceipt?.taxAmount / chatRoomData?.users?.length;
 
         // Add the calculated share to the user's object
         return {
@@ -224,10 +232,12 @@ export const finalizeItems = async (chatId, receiptId, orderedItems) => {
       updatedReceipt.userItems = userItemsWithShare;
 
       // Calculate the total amount to be paid to the paidBy user
-      const totalAmountToPaidByUser = userItemsWithShare.reduce(
+      const totalBill = userItemsWithShare.reduce(
         (total, userItem) => total + userItem.myShare,
         0
       );
+
+      const totalAmountToPaidByUser = totalBill - userItemsWithShare.filter(user => user.userId === chosenReceipt.paidBy)[0].myShare;
 
       // Update the paidBy user's debit field
       const paidByUserDocRef = firestore()
@@ -259,10 +269,12 @@ export const finalizeItems = async (chatId, receiptId, orderedItems) => {
         }
 
         const userData = userDoc.data();
+        const currentDebit = userData?.debit || 0;
         const updatedCredit = (userData.credit || 0) + userItem.myShare;
 
         return userDocRef.update({
-          credit: updatedCredit,
+          credit: userItem.userId === chosenReceipt.paidBy ? userData?.credit : updatedCredit,
+          balance: userItem.userId === chosenReceipt.paidBy ?  currentDebit - userData?.credit : currentDebit - updatedCredit
         });
       });
 
@@ -351,7 +363,7 @@ export const payMyShare = async (chatId, receiptId) => {
     const paidByUserActivities = paidByUser?.activities || [];
     const paidUserDebit = paidByUser?.debit || 0;
     const paidUserCredit = paidByUser?.credit || 0;
-    
+
     // Calculate new balance and debit for the paidBy user
     const newDebit = paidUserDebit - currentUserShare;
     const newPaidByUserBalance = newDebit - paidUserCredit;
@@ -374,7 +386,6 @@ export const payMyShare = async (chatId, receiptId) => {
     // Calculate new credit for the current user
     const newCredit = currentUserCredit - currentUserShare;
     const newCurrentUserBalance = currentUserDebit - newCredit;
-
 
     const currentUserNewActivity = {
       createdAt: new Date().toISOString(),
@@ -542,10 +553,9 @@ export const updateProfile = async (username, profilePic) => {
     });
 
     return {
-      success: true, 
-      user: user
-    }
-
+      success: true,
+      user: user,
+    };
   } catch (error) {
     console.error("Error updating profile:", error);
     throw Error(error.message || "Failed to update profile");

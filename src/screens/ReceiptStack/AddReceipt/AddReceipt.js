@@ -3,9 +3,6 @@ import {
   Text,
   SafeAreaView,
   Button,
-  TouchableOpacity,
-  NativeModules,
-  ScrollView,
   FlatList,
   Alert,
 } from "react-native";
@@ -18,12 +15,10 @@ import CustomButton from "../../../components/CustomButton/CustomButton";
 import TextRecognition from "@react-native-ml-kit/text-recognition";
 import GeneralHeader from "../../../components/Headers/GeneralHeader/GeneralHeader";
 import { Formik } from "formik";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import NativeInput from "../../../components/NativeInput/NativeInput";
 import * as Yup from "yup";
 import { moderateScale } from "react-native-size-matters";
 import { showError } from "../../../utils/MessageHandlers";
-import { CommonActions } from "@react-navigation/native";
 import ExtractedItemsForm from "../../../components/ActionSheets/ExtractedItemsForm/ExtractedItemsForm";
 
 const AddReceipt = (props) => {

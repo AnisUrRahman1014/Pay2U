@@ -139,6 +139,7 @@ const ReceiptCard = ({ receiptData, chatId, totalMembers }) => {
           title={"Total Bill:"}
           desc={`$ ${receiptData?.totalBill}`}
         />
+        <TextWrapper title={"GST:"} desc={receiptData?.gst+" %"} />
         <TextWrapper title={"Created By:"} desc={createdBy?.userName} />
         <TextWrapper title={"Paid By:"} desc={paidByUser?.userName || "None"} />
         <FlatList

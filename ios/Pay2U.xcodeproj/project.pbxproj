@@ -14,12 +14,12 @@
 		96905EF65AED1B983A6B3ABC /* libPods-Pay2U.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 58EEBF8E8E6FB1BC6CAF49B5 /* libPods-Pay2U.a */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
-		1EADB16D0B7741AAA42F3A27 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 02987829DB4F439CBF2E71EE /* GoogleService-Info.plist */; };
-		1947E350EBF84DE6A4138DD2 /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = 260915FB761449FDAD66FDA4 /* noop-file.swift */; };
-		8ED987BF130E4035BA1C97EF /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8E6AB7BE559F450FA2B07326 /* Lato-Bold.ttf */; };
-		CB3A2E2D82CB4BEDAB6AF920 /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = A834A271C52B4DC6B949DEF1 /* Lato-Regular.ttf */; };
-		DF82CF9B381C481792207F1B /* Lato-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D43C4B7921E34D93AA8BF181 /* Lato-Thin.ttf */; };
-		E412A88653A84891ADD40A68 /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AE6185959D144B54B311B7A5 /* Lato-Light.ttf */; };
+		C49647F7276043518ABAEBE2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3CF7E978A49C46549C5D956D /* GoogleService-Info.plist */; };
+		CD2CBA2754A845BF95561DBD /* noop-file.swift in Sources */ = {isa = PBXBuildFile; fileRef = A20DAE3E158F4593B5E2CC87 /* noop-file.swift */; };
+		F0D0DF9293A24541AFB49DD0 /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 839A1C43FDB74D37AEBB5E2A /* Lato-Bold.ttf */; };
+		58A14A287DFC491E8C5D664B /* Lato-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E514874797484BC49B2C1ED2 /* Lato-Regular.ttf */; };
+		026E712E464D4FFCB99A8F65 /* Lato-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CD86F394C2D44587A4436508 /* Lato-Thin.ttf */; };
+		9A1C72F2B48943B2BB974A77 /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 090FF93E593843779EB65F61 /* Lato-Light.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,13 +36,13 @@
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-Pay2U/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
-		02987829DB4F439CBF2E71EE /* GoogleService-Info.plist */ = {isa = PBXFileReference; name = "GoogleService-Info.plist"; path = "Pay2U/GoogleService-Info.plist"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = text.plist.xml; explicitFileType = undefined; includeInIndex = 0; };
-		260915FB761449FDAD66FDA4 /* noop-file.swift */ = {isa = PBXFileReference; name = "noop-file.swift"; path = "Pay2U/noop-file.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
-		E7B67F93DB3B4BB89A43DCAA /* Pay2U-Bridging-Header.h */ = {isa = PBXFileReference; name = "Pay2U-Bridging-Header.h"; path = "Pay2U/Pay2U-Bridging-Header.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
-		8E6AB7BE559F450FA2B07326 /* Lato-Bold.ttf */ = {isa = PBXFileReference; name = "Lato-Bold.ttf"; path = "../assets/fonts/Lato-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		A834A271C52B4DC6B949DEF1 /* Lato-Regular.ttf */ = {isa = PBXFileReference; name = "Lato-Regular.ttf"; path = "../assets/fonts/Lato-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		D43C4B7921E34D93AA8BF181 /* Lato-Thin.ttf */ = {isa = PBXFileReference; name = "Lato-Thin.ttf"; path = "../assets/fonts/Lato-Thin.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		AE6185959D144B54B311B7A5 /* Lato-Light.ttf */ = {isa = PBXFileReference; name = "Lato-Light.ttf"; path = "../assets/fonts/Lato-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3CF7E978A49C46549C5D956D /* GoogleService-Info.plist */ = {isa = PBXFileReference; name = "GoogleService-Info.plist"; path = "Pay2U/GoogleService-Info.plist"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = text.plist.xml; explicitFileType = undefined; includeInIndex = 0; };
+		A20DAE3E158F4593B5E2CC87 /* noop-file.swift */ = {isa = PBXFileReference; name = "noop-file.swift"; path = "Pay2U/noop-file.swift"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.swift; explicitFileType = undefined; includeInIndex = 0; };
+		1598C53598BC49668C45D052 /* Pay2U-Bridging-Header.h */ = {isa = PBXFileReference; name = "Pay2U-Bridging-Header.h"; path = "Pay2U/Pay2U-Bridging-Header.h"; sourceTree = "<group>"; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; explicitFileType = undefined; includeInIndex = 0; };
+		839A1C43FDB74D37AEBB5E2A /* Lato-Bold.ttf */ = {isa = PBXFileReference; name = "Lato-Bold.ttf"; path = "../assets/fonts/Lato-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		E514874797484BC49B2C1ED2 /* Lato-Regular.ttf */ = {isa = PBXFileReference; name = "Lato-Regular.ttf"; path = "../assets/fonts/Lato-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		CD86F394C2D44587A4436508 /* Lato-Thin.ttf */ = {isa = PBXFileReference; name = "Lato-Thin.ttf"; path = "../assets/fonts/Lato-Thin.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		090FF93E593843779EB65F61 /* Lato-Light.ttf */ = {isa = PBXFileReference; name = "Lato-Light.ttf"; path = "../assets/fonts/Lato-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,9 +67,9 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
-				02987829DB4F439CBF2E71EE /* GoogleService-Info.plist */,
-				260915FB761449FDAD66FDA4 /* noop-file.swift */,
-				E7B67F93DB3B4BB89A43DCAA /* Pay2U-Bridging-Header.h */,
+				3CF7E978A49C46549C5D956D /* GoogleService-Info.plist */,
+				A20DAE3E158F4593B5E2CC87 /* noop-file.swift */,
+				1598C53598BC49668C45D052 /* Pay2U-Bridging-Header.h */,
 			);
 			name = Pay2U;
 			sourceTree = "<group>";
@@ -99,7 +99,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				D65327D7A22EEC0BE12398D9 /* Pods */,
 				D7E4C46ADA2E9064B798F356 /* ExpoModulesProviders */,
-				AA0CB03F175E468DBA1C329A /* Resources */,
+				9001F92D5D534A0986D20E67 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -148,13 +148,13 @@
 			name = ExpoModulesProviders;
 			sourceTree = "<group>";
 		};
-		AA0CB03F175E468DBA1C329A /* Resources */ = {
+		9001F92D5D534A0986D20E67 /* Resources */ = {
 			isa = "PBXGroup";
 			children = (
-				8E6AB7BE559F450FA2B07326 /* Lato-Bold.ttf */,
-				A834A271C52B4DC6B949DEF1 /* Lato-Regular.ttf */,
-				D43C4B7921E34D93AA8BF181 /* Lato-Thin.ttf */,
-				AE6185959D144B54B311B7A5 /* Lato-Light.ttf */,
+				839A1C43FDB74D37AEBB5E2A /* Lato-Bold.ttf */,
+				E514874797484BC49B2C1ED2 /* Lato-Regular.ttf */,
+				CD86F394C2D44587A4436508 /* Lato-Thin.ttf */,
+				090FF93E593843779EB65F61 /* Lato-Light.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -222,12 +222,12 @@
 				BB2F792D24A3F905000567C9 /* Expo.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */,
-				1EADB16D0B7741AAA42F3A27 /* GoogleService-Info.plist in Resources */,
-				F7E45B37BECF4D2D990A4BD3 /* Pay2U-Bridging-Header.h in Resources */,
-				8ED987BF130E4035BA1C97EF /* Lato-Bold.ttf in Resources */,
-				CB3A2E2D82CB4BEDAB6AF920 /* Lato-Regular.ttf in Resources */,
-				DF82CF9B381C481792207F1B /* Lato-Thin.ttf in Resources */,
-				E412A88653A84891ADD40A68 /* Lato-Light.ttf in Resources */,
+				C49647F7276043518ABAEBE2 /* GoogleService-Info.plist in Resources */,
+				A39DC378863C4E91BB0D3D6F /* Pay2U-Bridging-Header.h in Resources */,
+				F0D0DF9293A24541AFB49DD0 /* Lato-Bold.ttf in Resources */,
+				58A14A287DFC491E8C5D664B /* Lato-Regular.ttf in Resources */,
+				026E712E464D4FFCB99A8F65 /* Lato-Thin.ttf in Resources */,
+				9A1C72F2B48943B2BB974A77 /* Lato-Light.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,7 +303,7 @@
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */,
-				1947E350EBF84DE6A4138DD2 /* noop-file.swift in Sources */,
+				CD2CBA2754A845BF95561DBD /* noop-file.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

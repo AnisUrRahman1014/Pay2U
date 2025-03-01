@@ -111,6 +111,14 @@ const Home = () => {
     }
   };
 
+  const RenderEmptyContainer = () => {
+    return (
+      <View>
+        <Text style={styles.emptyTxt}>Nothing available</Text>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.mainContainer}>
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
@@ -136,8 +144,15 @@ const Home = () => {
           onPressViewAll={() => navigation.navigate("GroupsStack")}
         />
         <View style={styles.container}>
+          {groups?.length === 0 && RenderEmptyContainer()}
           {groups.map((group, index) => {
-            return <ContactViewCard key={index} data={group} onPress={() => openChatRoom(group, "group")}/>;
+            return (
+              <ContactViewCard
+                key={index}
+                data={group}
+                onPress={() => openChatRoom(group, "group")}
+              />
+            );
           })}
         </View>
 
@@ -148,6 +163,7 @@ const Home = () => {
           onPressViewAll={() => navigation.navigate("FriendsStack")}
         />
         <View style={styles.container}>
+          {friends?.length === 0 && RenderEmptyContainer()}
           {friends.map((friend, index) => {
             return (
               <ContactViewCard

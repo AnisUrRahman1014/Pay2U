@@ -7,9 +7,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: AppColors.White,
   },
-  container:{
-    padding: moderateScale(10)
-  }
+  container: {
+    padding: moderateScale(10),
+  },
+  emptyTxt: {
+    fontFamily: "Lato-Bold",
+    fontSize: moderateScale(16, 0.3),
+    color: AppColors.error,
+    alignSelf: 'center'
+  },
 });
 
 export default styles;

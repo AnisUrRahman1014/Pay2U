@@ -119,11 +119,20 @@ const ChooseMembers = (props) => {
     }
   };
 
+  const RenderEmptyContainer = () => {
+    return (
+      <View>
+        <Text style={styles.emptyTxt}>Nothing available</Text>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.mainContainer}>
       <GeneralHeader header={"Choose participants"} />
       <ScrollView style={styles.container}>
         <HeadingText heading={"Groups"} headingIndex={1.8} />
+        {groups?.length === 0 && RenderEmptyContainer()}
         {groups.map((group, index) => {
           return (
             <ContactViewCard
@@ -134,6 +143,7 @@ const ChooseMembers = (props) => {
           );
         })}
         <HeadingText heading={"Friends"} headingIndex={1.8} />
+        {friends?.length === 0 && RenderEmptyContainer()}
         {friends.map((friend, index) => {
           return (
             <ContactViewCard

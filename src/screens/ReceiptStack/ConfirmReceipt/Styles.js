@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     fontFamily: "Lato-Regular",
     marginLeft: moderateScale(10),
     fontSize: moderateScale(16),
-    lineHeight: moderateScale(18)
+    lineHeight: moderateScale(18),
   },
   confirmButton: {
     bottom: 0,
@@ -39,11 +39,20 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: moderateScale(10),
-    flex: 1
+    flex: 1,
   },
   row: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  inputStyles: (width) => ({
+    width: moderateScale(width),
+    alignSelf: "flex-end",
+    marginVertical: moderateScale(20)
+  }),
+  txt: {
+    fontFamily: "Lato-Regular",
+    fontSize: moderateScale(16),
   },
 });
 
