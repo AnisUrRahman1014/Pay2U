@@ -349,12 +349,12 @@ export const payMyShare = async (chatId, receiptId) => {
 
     const paidByUser = paidByUserDoc.data();
     const paidByUserActivities = paidByUser?.activities || [];
-    const paidUserBalance = paidByUser?.balance || 0;
     const paidUserDebit = paidByUser?.debit || 0;
-
+    const paidUserCredit = paidByUser?.credit || 0;
+    
     // Calculate new balance and debit for the paidBy user
-    const newBalance = paidUserBalance + currentUserShare;
     const newDebit = paidUserDebit - currentUserShare;
+    const newPaidByUserBalance = newDebit - paidUserCredit;
 
     // Get the current user's document
     const currentUserDocRef = firestore()
@@ -369,9 +369,12 @@ export const payMyShare = async (chatId, receiptId) => {
     const currentUserData = currentUserDoc.data();
     const currentUserActivities = currentUserData?.activities || [];
     const currentUserCredit = currentUserData?.credit || 0;
+    const currentUserDebit = currentUserData?.debit || 0;
 
     // Calculate new credit for the current user
     const newCredit = currentUserCredit - currentUserShare;
+    const newCurrentUserBalance = currentUserDebit - newCredit;
+
 
     const currentUserNewActivity = {
       createdAt: new Date().toISOString(),
@@ -411,13 +414,14 @@ export const payMyShare = async (chatId, receiptId) => {
     await Promise.all([
       // Update the paidBy user's balance and debit
       paidByUserDocRef.update({
-        balance: newBalance,
+        balance: newPaidByUserBalance,
         debit: newDebit,
         activities: paidByUserActivities,
       }),
 
       // Update the current user's credit
       currentUserDocRef.update({
+        balance: newCurrentUserBalance,
         credit: newCredit,
         activities: currentUserActivities,
       }),
